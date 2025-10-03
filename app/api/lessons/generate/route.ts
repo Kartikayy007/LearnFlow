@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createLesson, updateLesson } from '@/lib/db/queries';
 import { generateLesson } from '@/lib/ai/generator';
+
+export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,35 +15,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const lesson = await createLesson({ outline });
-    generateLessonAsync(lesson.id, outline);
+    const content = await generateLesson(outline);
 
     return NextResponse.json({
-      lessonId: lesson.id,
-      message: 'Lesson generation started',
+      success: true,
+      content,
+      title: outline,
+      status: 'generated'
     });
 
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to start lesson generation' },
+      {
+        success: false,
+        error: 'Failed to generate lesson',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
-  }
-}
-
-async function generateLessonAsync(lessonId: string, outline: string) {
-  try {
-    const content = await generateLesson(outline);
-
-    await updateLesson(lessonId, {
-      status: 'generated',
-      content,
-    });
-
-  } catch (error) {
-    await updateLesson(lessonId, {
-      status: 'failed',
-      error_message: error instanceof Error ? error.message : 'Generation failed',
-    });
   }
 }

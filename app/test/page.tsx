@@ -1,65 +1,98 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function TestPage() {
   const [loading, setLoading] = useState(false);
-  const [lessonId, setLessonId] = useState<string | null>(null);
   const [lessonData, setLessonData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [showRendered, setShowRendered] = useState(false);
+  const [jsCode, setJsCode] = useState<string | null>(null);
+  const [transpiling, setTranspiling] = useState(false);
 
   const generateLesson = async () => {
     setLoading(true);
     setError(null);
     setLessonData(null);
     setShowRendered(false);
+    setJsCode(null);
 
     try {
       const response = await fetch('/api/lessons/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ outline: 'Create an interactive quiz about space and planets' }),
+        body: JSON.stringify({
+          outline:
+            'A 10 question quiz on michecal jackson with his pictures',
+        }),
       });
 
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
       const data = await response.json();
-      setLessonId(data.lessonId);
 
-      let attempts = 0;
-      const maxAttempts = 20;
-
-      while (attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const lessonResponse = await fetch(`/api/lessons/${data.lessonId}`);
-        const lesson = await lessonResponse.json();
-
-        if (lesson.status === 'generated') {
-          setLessonData(lesson);
-          break;
-        } else if (lesson.status === 'failed') {
-          setError(lesson.error_message || 'Generation failed');
-          break;
-        }
-
-        attempts++;
+      if (data.success) {
+        setLessonData(data);
+      } else {
+        setError(data.error || 'Generation failed');
       }
-
-      if (attempts >= maxAttempts) {
-        setError('Generation timeout');
-      }
-
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Unknown error occurred');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const getIframeContent = () => {
-    if (!lessonData?.content) return '';
+  useEffect(() => {
+    if (lessonData?.content && !jsCode) {
+      transpileTypeScript(lessonData.content);
+    }
+  }, [lessonData, jsCode]);
 
-    const jsCode = lessonData.content;
+  const transpileTypeScript = async (tsCode: string) => {
+    setTranspiling(true);
+    setError(null);
+
+    try {
+      console.log('Starting server-side transpilation...');
+      const response = await fetch('/api/transpile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: tsCode })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log('Transpilation successful, JavaScript length:', result.javascript.length);
+        setJsCode(result.javascript);
+        setShowRendered(true);
+      } else {
+        setError(`Transpilation failed: ${result.error}`);
+        console.error('Transpilation error:', result.error);
+      }
+    } catch (err) {
+      console.error('Failed to transpile:', err);
+      setError('Failed to transpile TypeScript code');
+    } finally {
+      setTranspiling(false);
+    }
+  };
+
+  const getIframeContent = () => {
+    if (!jsCode) return '';
+
+    // Base64 encode the JavaScript code to safely pass it to the iframe
+    // Convert string to base64 without using deprecated unescape
+    const encoder = new TextEncoder();
+    const data = encoder.encode(jsCode);
+    const encodedCode = btoa(String.fromCharCode(...data));
 
     return `
       <!DOCTYPE html>
@@ -85,6 +118,7 @@ export default function TestPage() {
               border-radius: 4px;
               margin: 10px 0;
               display: none;
+              white-space: pre-wrap;
             }
           </style>
         </head>
@@ -92,25 +126,41 @@ export default function TestPage() {
           <div id="root"></div>
           <div id="error"></div>
 
-          <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-          <script type="text/babel">
+          <script>
             const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
-            ${jsCode}
-
-            const root = ReactDOM.createRoot(document.getElementById('root'));
-
             try {
-              root.render(<LessonComponent />);
-            } catch (err) {
-              document.getElementById('error').style.display = 'block';
-              document.getElementById('error').innerText = 'Error: ' + err.message;
-            }
+              console.log('Decoding and executing JavaScript...');
 
+              // Decode the Base64 encoded JavaScript
+              const encodedCode = "${encodedCode}";
+              const decodedBytes = atob(encodedCode);
+              const jsCode = new TextDecoder().decode(new Uint8Array([...decodedBytes].map(char => char.charCodeAt(0))));
+
+              console.log('JavaScript code length:', jsCode.length);
+
+              // Execute the JavaScript
+              eval(jsCode);
+
+              if (typeof LessonComponent === 'undefined') {
+                throw new Error('LessonComponent not found after code execution');
+              }
+
+              // Render the component
+              const root = ReactDOM.createRoot(document.getElementById('root'));
+              root.render(React.createElement(LessonComponent));
+              console.log('Component rendered successfully');
+
+            } catch (err) {
+              console.error('Execution error:', err);
+              document.getElementById('error').style.display = 'block';
+              document.getElementById('error').innerText = 'Error: ' + err.message + '\\nStack: ' + err.stack;
+            }
           </script>
 
           <script>
             window.addEventListener('error', (e) => {
+              console.error('Window error:', e);
               document.getElementById('error').style.display = 'block';
               document.getElementById('error').innerText = 'Error: ' + e.message;
             });
@@ -122,7 +172,7 @@ export default function TestPage() {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'monospace' }}>
-      <h1>Simple Test Page (Pure JavaScript + Inline Styles)</h1>
+      <h1>Simple Test Page - Direct API Response</h1>
 
       <button
         onClick={generateLesson}
@@ -130,21 +180,15 @@ export default function TestPage() {
         style={{
           padding: '10px 20px',
           fontSize: '16px',
-          backgroundColor: loading ? '#ccc' : '#0070f3',
+          backgroundColor: loading ? '#ccc' : '#007bff',
           color: 'white',
           border: 'none',
-          borderRadius: '5px',
+          borderRadius: '4px',
           cursor: loading ? 'not-allowed' : 'pointer',
         }}
       >
-        {loading ? 'Generating...' : 'Generate Lesson'}
+        {loading ? 'Generating...' : 'Generate Lesson (Cartesian Grid)'}
       </button>
-
-      {lessonId && (
-        <div style={{ marginTop: '20px' }}>
-          <strong>Lesson ID:</strong> {lessonId}
-        </div>
-      )}
 
       {error && (
         <div style={{ marginTop: '20px', color: 'red' }}>
@@ -152,34 +196,63 @@ export default function TestPage() {
         </div>
       )}
 
+      {transpiling && (
+        <div style={{ marginTop: '20px', color: 'blue' }}>
+          <strong>Transpiling TypeScript to JavaScript...</strong>
+        </div>
+      )}
+
       {lessonData && (
         <div style={{ marginTop: '20px' }}>
-          <h2>Lesson Generated!</h2>
-
-          <div style={{ marginTop: '10px' }}>
-            <strong>Status:</strong> {lessonData.status} ✓
-          </div>
+          <h2>✅ Lesson Generated Successfully!</h2>
 
           <div style={{ marginTop: '10px' }}>
             <strong>Title:</strong> {lessonData.title}
           </div>
 
           <details style={{ marginTop: '20px' }}>
-            <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>
-              Generated JavaScript Code (click to expand)
+            <summary
+              style={{ cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              Generated TypeScript Code (click to expand)
             </summary>
-            <pre style={{
-              backgroundColor: '#f4f4f4',
-              padding: '15px',
-              borderRadius: '5px',
-              overflow: 'auto',
-              maxHeight: '400px',
-              border: '1px solid #ddd',
-              marginTop: '10px',
-            }}>
+            <pre
+              style={{
+                backgroundColor: '#1111',
+                padding: '15px',
+                borderRadius: '5px',
+                overflow: 'auto',
+                maxHeight: '400px',
+                border: '1px solid #ddd',
+                marginTop: '10px',
+              }}
+            >
               {lessonData.content}
             </pre>
           </details>
+
+          {jsCode && (
+            <details style={{ marginTop: '20px' }}>
+              <summary
+                style={{ cursor: 'pointer', fontWeight: 'bold' }}
+              >
+                Transpiled JavaScript Code (click to expand)
+              </summary>
+              <pre
+                style={{
+                  backgroundColor: '#1111',
+                  padding: '15px',
+                  borderRadius: '5px',
+                  overflow: 'auto',
+                  maxHeight: '400px',
+                  border: '1px solid #4caf50',
+                  marginTop: '10px',
+                }}
+              >
+                {jsCode}
+              </pre>
+            </details>
+          )}
 
           <div style={{ marginTop: '20px' }}>
             <button
@@ -190,37 +263,40 @@ export default function TestPage() {
                 backgroundColor: '#28a745',
                 color: 'white',
                 border: 'none',
-                borderRadius: '5px',
+                borderRadius: '4px',
                 cursor: 'pointer',
+                marginRight: '10px',
               }}
+              disabled={!jsCode}
             >
-              {showRendered ? 'Hide Component' : 'Show Component'}
+              {showRendered ? 'Hide' : 'Show'} Rendered Component
             </button>
           </div>
 
-          {showRendered && (
-            <>
-              <h3 style={{ marginTop: '20px' }}>Rendered Component:</h3>
-              <div style={{
-                marginTop: '10px',
-                border: '2px solid #0070f3',
-                borderRadius: '8px',
-                overflow: 'hidden',
-                backgroundColor: '#fff',
-                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-              }}>
+          {showRendered && jsCode && (
+            <div style={{ marginTop: '20px' }}>
+              <h3>Rendered Component:</h3>
+              <div
+                style={{
+                  border: '2px solid #28a745',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  marginTop: '10px',
+                }}
+              >
                 <iframe
                   srcDoc={getIframeContent()}
                   style={{
                     width: '100%',
                     height: '600px',
                     border: 'none',
+                    background: 'white',
                   }}
-                  title="Rendered Lesson"
+                  title="Generated Lesson"
                   sandbox="allow-scripts"
                 />
               </div>
-            </>
+            </div>
           )}
         </div>
       )}

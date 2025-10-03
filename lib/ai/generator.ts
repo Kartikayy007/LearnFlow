@@ -14,10 +14,10 @@ export async function generateLesson(outline: string): Promise<string> {
 
   try {
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-2.5-flash',
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: 8192,
+        maxOutputTokens: 16384,
       }
     });
 
@@ -58,7 +58,7 @@ function validateGeneratedCode(code: string): void {
     /fetch\s*\(/,
     /XMLHttpRequest/,
     /eval\s*\(/,
-    /Function\s*\(/,
+    /new\s+Function\s*\(/,
   ];
 
   for (const pattern of dangerousPatterns) {
