@@ -288,7 +288,6 @@ export default function TestPage() {
         </div>
       )}
 
-      {/* Lesson List Section */}
       <div style={{
         marginTop: '30px',
         borderTop: '2px solid #ccc',
@@ -389,7 +388,6 @@ export default function TestPage() {
         )}
       </div>
 
-      {/* Lesson Display Section */}
       {lessonData && (
         <div style={{ marginTop: '30px', borderTop: '2px solid #ccc', paddingTop: '20px' }}>
           <h2>

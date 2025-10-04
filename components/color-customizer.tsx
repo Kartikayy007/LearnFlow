@@ -14,12 +14,12 @@ export function ColorCustomizer() {
     border: '#333333',
   });
 
-  // Load saved colors on mount or apply defaults
+  
   useEffect(() => {
     const savedColors = localStorage.getItem('customColors');
     if (savedColors) {
       const parsed = JSON.parse(savedColors);
-      // Ensure all properties exist, use defaults for missing ones
+      
       const completeColors = {
         primary: parsed.primary || '#333333',
         primaryForeground: parsed.primaryForeground || '#ffffff',
@@ -32,7 +32,7 @@ export function ColorCustomizer() {
       setColors(completeColors);
       applyColors(completeColors);
     } else {
-      // No saved colors, apply the default colors
+      
       const defaultColors = {
         primary: '#333333',
         primaryForeground: '#ffffff',

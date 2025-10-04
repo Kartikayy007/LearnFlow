@@ -13,7 +13,7 @@ export function StaggeredMenu() {
 
   useEffect(() => {
     if (isOpen) {
-      // Show overlay with fade in
+      
       gsap.to(overlayRef.current, {
         visibility: 'visible',
         opacity: 1,
@@ -21,7 +21,7 @@ export function StaggeredMenu() {
         ease: 'power2.out',
       });
 
-      // Animate menu container with scale and slide
+      
       gsap.fromTo(
         menuRef.current,
         {
@@ -36,7 +36,7 @@ export function StaggeredMenu() {
         }
       );
 
-      // Stagger animate menu items with more dramatic effect
+      
       gsap.fromTo(
         itemsRef.current,
         {
@@ -55,7 +55,7 @@ export function StaggeredMenu() {
         }
       );
     } else {
-      // Hide overlay
+      
       gsap.to(overlayRef.current, {
         opacity: 0,
         duration: 0.3,
@@ -65,7 +65,7 @@ export function StaggeredMenu() {
         },
       });
 
-      // Hide menu with scale and slide
+      
       gsap.to(menuRef.current, {
         x: '100%',
         scale: 0.95,
@@ -73,7 +73,7 @@ export function StaggeredMenu() {
         ease: 'power3.in',
       });
 
-      // Reset items
+      
       gsap.set(itemsRef.current, {
         x: 100,
         opacity: 0,
@@ -90,8 +90,7 @@ export function StaggeredMenu() {
 
   return (
     <>
-      {/* Menu Toggle Button */}
-      <button
+=      <button
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed top-4 right-4 z-50 p-3 rounded-lg transition-all duration-300 shadow-lg ${
           isOpen
@@ -107,8 +106,7 @@ export function StaggeredMenu() {
         />
       </button>
 
-      {/* Overlay */}
-      <div
+=      <div
         ref={overlayRef}
         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 invisible opacity-0"
         onClick={() => setIsOpen(false)}
@@ -120,8 +118,7 @@ export function StaggeredMenu() {
         style={{ willChange: 'transform', transformOrigin: 'right center' }}
       >
         <div className="p-6 pt-20">
-          {/* Menu Title */}
-          <div ref={addToRefs} className="mb-8">
+=          <div ref={addToRefs} className="mb-8">
             <h2 className="text-2xl font-bold text-white">Theme Settings</h2>
             <p className="text-sm text-gray-400 mt-1">
               Customize your app appearance
@@ -129,8 +126,7 @@ export function StaggeredMenu() {
           </div>
 
 
-          {/* Color Customizer Section */}
-          <div ref={addToRefs} className="mb-8">
+=          <div ref={addToRefs} className="mb-8">
             <h3 className="text-lg font-semibold text-white mb-4">
               Color Scheme
             </h3>
