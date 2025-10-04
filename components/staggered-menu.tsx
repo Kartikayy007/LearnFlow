@@ -90,7 +90,7 @@ export function StaggeredMenu() {
 
   return (
     <>
-=      <button
+     <button
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed top-4 right-4 z-50 p-3 rounded-lg transition-all duration-300 shadow-lg ${
           isOpen
@@ -106,7 +106,7 @@ export function StaggeredMenu() {
         />
       </button>
 
-=      <div
+     <div
         ref={overlayRef}
         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 invisible opacity-0"
         onClick={() => setIsOpen(false)}
@@ -118,7 +118,7 @@ export function StaggeredMenu() {
         style={{ willChange: 'transform', transformOrigin: 'right center' }}
       >
         <div className="p-6 pt-20">
-=          <div ref={addToRefs} className="mb-8">
+         <div ref={addToRefs} className="mb-8">
             <h2 className="text-2xl font-bold text-white">Theme Settings</h2>
             <p className="text-sm text-gray-400 mt-1">
               Customize your app appearance
@@ -126,7 +126,7 @@ export function StaggeredMenu() {
           </div>
 
 
-=          <div ref={addToRefs} className="mb-8">
+          <div ref={addToRefs} className="mb-8">
             <h3 className="text-lg font-semibold text-white mb-4">
               Color Scheme
             </h3>

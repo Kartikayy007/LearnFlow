@@ -9,7 +9,7 @@ import { LessonExplore } from '@/components/lesson/LessonExplore';
 import { YourLessons } from '@/components/lesson/YourLessons';
 import { StaggeredMenu } from '@/components/staggered-menu';
 import { Sidebar, SidebarBody, SidebarLink, useSidebar } from '@/components/sidebar';
-import { IconHome, IconList, IconBrandGithub } from '@tabler/icons-react';
+import { IconHome, IconList } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
 const links = [
