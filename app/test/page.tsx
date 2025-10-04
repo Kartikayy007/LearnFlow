@@ -2,6 +2,17 @@
 
 import { useState, useEffect } from 'react';
 
+interface Lesson {
+  id: string;
+  outline: string;
+  title: string;
+  status: 'generating' | 'generated' | 'failed';
+  content?: string;
+  error_message?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export default function TestPage() {
   const [loading, setLoading] = useState(false);
   const [lessonData, setLessonData] = useState<any>(null);
@@ -10,12 +21,78 @@ export default function TestPage() {
   const [jsCode, setJsCode] = useState<string | null>(null);
   const [transpiling, setTranspiling] = useState(false);
 
+  // New state for lesson list
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [loadingLessons, setLoadingLessons] = useState(false);
+  const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
+
+  // Fetch all lessons
+  const fetchAllLessons = async () => {
+    setLoadingLessons(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/lessons');
+      if (!response.ok) {
+        throw new Error('Failed to fetch lessons');
+      }
+      const data = await response.json();
+      setLessons(data);
+    } catch (err) {
+      setError('Failed to fetch lessons');
+      console.error('Error fetching lessons:', err);
+    } finally {
+      setLoadingLessons(false);
+    }
+  };
+
+  // Load specific lesson
+  const loadLesson = async (lessonId: string) => {
+    setLoading(true);
+    setError(null);
+    setLessonData(null);
+    setJsCode(null);
+    setShowRendered(false);
+    setSelectedLessonId(lessonId);
+
+    try {
+      const response = await fetch(`/api/lessons/${lessonId}`);
+      if (!response.ok) {
+        throw new Error('Failed to load lesson');
+      }
+      const lesson = await response.json();
+
+      if (lesson.status === 'generated' && lesson.content) {
+        setLessonData({
+          success: true,
+          content: lesson.content,
+          title: lesson.title,
+          status: 'generated'
+        });
+      } else if (lesson.status === 'failed') {
+        setError(lesson.error_message || 'Lesson generation failed');
+      } else {
+        setError('Lesson is still generating');
+      }
+    } catch (err) {
+      setError('Failed to load lesson');
+      console.error('Error loading lesson:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load lessons on mount
+  useEffect(() => {
+    fetchAllLessons();
+  }, []);
+
   const generateLesson = async () => {
     setLoading(true);
     setError(null);
     setLessonData(null);
     setShowRendered(false);
     setJsCode(null);
+    setSelectedLessonId(null);
 
     try {
       const response = await fetch('/api/lessons/generate', {
@@ -23,7 +100,7 @@ export default function TestPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           outline:
-            'A 10 question quiz on michecal jackson with his pictures',
+            'simple addition',
         }),
       });
 
@@ -33,8 +110,15 @@ export default function TestPage() {
 
       const data = await response.json();
 
-      if (data.success) {
-        setLessonData(data);
+      if (data.success && data.lessonId) {
+        // API now returns lesson ID, so we need to fetch the lesson
+        console.log('Lesson created with ID:', data.lessonId);
+
+        // Refresh the lesson list first
+        await fetchAllLessons();
+
+        // Then load the newly generated lesson
+        await loadLesson(data.lessonId);
       } else {
         setError(data.error || 'Generation failed');
       }
@@ -171,24 +255,23 @@ export default function TestPage() {
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'monospace' }}>
-      <h1>Simple Test Page - Direct API Response</h1>
+    <div className="p-6 font-mono bg-background text-foreground min-h-screen">
+      <h1 className="text-3xl font-bold mb-6">LearnFlow Test Page</h1>
 
-      <button
-        onClick={generateLesson}
-        disabled={loading}
-        style={{
-          padding: '10px 20px',
-          fontSize: '16px',
-          backgroundColor: loading ? '#ccc' : '#007bff',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: loading ? 'not-allowed' : 'pointer',
-        }}
-      >
-        {loading ? 'Generating...' : 'Generate Lesson (Cartesian Grid)'}
-      </button>
+      <div className="flex gap-4 items-center mb-6">
+        <button
+          onClick={generateLesson}
+          disabled={loading}
+          className={`px-5 py-2 rounded text-base font-medium transition-colors ${
+            loading
+              ? 'bg-muted text-muted-foreground cursor-not-allowed'
+              : 'bg-primary text-primary-foreground hover:opacity-90 cursor-pointer'
+          }`}
+        >
+          {loading ? 'Processing...' : 'Generate New Lesson (Solar System)'}
+        </button>
+        <span className="text-muted-foreground">OR select a lesson from the list below</span>
+      </div>
 
       {error && (
         <div style={{ marginTop: '20px', color: 'red' }}>
@@ -202,9 +285,113 @@ export default function TestPage() {
         </div>
       )}
 
+      {/* Lesson List Section */}
+      <div style={{
+        marginTop: '30px',
+        borderTop: '2px solid #ccc',
+        paddingTop: '20px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
+          <h2 style={{ margin: 0 }}>Existing Lessons</h2>
+          <button
+            onClick={fetchAllLessons}
+            disabled={loadingLessons}
+            style={{
+              padding: '5px 15px',
+              fontSize: '14px',
+              backgroundColor: loadingLessons ? '#ccc' : '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: loadingLessons ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {loadingLessons ? 'Loading...' : 'Refresh List'}
+          </button>
+        </div>
+
+        {lessons.length > 0 && (
+          <div style={{
+            maxHeight: '300px',
+            overflowY: 'auto',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            padding: '10px'
+          }}>
+            {lessons.map(lesson => (
+              <div
+                key={lesson.id}
+                style={{
+                  padding: '12px',
+                  border: '1px solid #e0e0e0',
+                  marginBottom: '8px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  backgroundColor: selectedLessonId === lesson.id ? '#e3f2fd' : 'white',
+                  transition: 'background-color 0.2s',
+                }}
+                onClick={() => loadLesson(lesson.id)}
+                onMouseEnter={(e) => {
+                  if (selectedLessonId !== lesson.id) {
+                    e.currentTarget.style.backgroundColor = '#f5f5f5';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedLessonId !== lesson.id) {
+                    e.currentTarget.style.backgroundColor = 'white';
+                  }
+                }}
+              >
+                <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                  {lesson.title}
+                </div>
+                <div style={{ fontSize: '12px', color: '#666' }}>
+                  <span style={{
+                    display: 'inline-block',
+                    marginRight: '15px',
+                    padding: '2px 6px',
+                    borderRadius: '3px',
+                    backgroundColor:
+                      lesson.status === 'generated' ? '#d4edda' :
+                      lesson.status === 'failed' ? '#f8d7da' :
+                      '#fff3cd',
+                    color:
+                      lesson.status === 'generated' ? '#155724' :
+                      lesson.status === 'failed' ? '#721c24' :
+                      '#856404',
+                  }}>
+                    {lesson.status}
+                  </span>
+                  Created: {new Date(lesson.created_at).toLocaleString()}
+                </div>
+                <div style={{
+                  fontSize: '11px',
+                  color: '#999',
+                  marginTop: '4px',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}>
+                  {lesson.outline}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {lessons.length === 0 && !loadingLessons && (
+          <p style={{ color: '#666', fontStyle: 'italic' }}>
+            No lessons found. Generate one to get started!
+          </p>
+        )}
+      </div>
+
+      {/* Lesson Display Section */}
       {lessonData && (
-        <div style={{ marginTop: '20px' }}>
-          <h2>✅ Lesson Generated Successfully!</h2>
+        <div style={{ marginTop: '30px', borderTop: '2px solid #ccc', paddingTop: '20px' }}>
+          <h2>
+            {selectedLessonId ? '📖 Loaded Lesson' : '✅ Generated Lesson'}
+          </h2>
 
           <div style={{ marginTop: '10px' }}>
             <strong>Title:</strong> {lessonData.title}
@@ -218,7 +405,7 @@ export default function TestPage() {
             </summary>
             <pre
               style={{
-                backgroundColor: '#1111',
+                backgroundColor: '#f4f4f4',
                 padding: '15px',
                 borderRadius: '5px',
                 overflow: 'auto',
@@ -240,7 +427,7 @@ export default function TestPage() {
               </summary>
               <pre
                 style={{
-                  backgroundColor: '#1111',
+                  backgroundColor: '#e8f5e9',
                   padding: '15px',
                   borderRadius: '5px',
                   overflow: 'auto',

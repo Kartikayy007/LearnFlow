@@ -12,7 +12,7 @@ CRITICAL REQUIREMENTS:
 6. Make it interactive and educational
 7. NO external API calls or fetch requests
 8. NO malicious code
-9. make it visually good and try to use free unsplash images for bg to make it look visually good
+9. DO NOT use any background images - use solid colors or gradients only
 
 The code should be a function like:
 function LessonComponent() {
@@ -29,11 +29,12 @@ export function createUserPrompt(outline: string): string {
 Remember to:
 - NO import statements (React is global)
 - Use INLINE STYLES for all styling (no CSS classes)
+- DO NOT use any external images or background images
+- Use colorful gradients or solid backgrounds instead
 - Use proper TypeScript type annotations for all variables and functions
 - Make it colorful and visually appealing
 - Include clear instructions for students
 - Make it interactive and engaging
-- Use unspalsh backgrounds
 
 Generate ONLY the TypeScript/React component code, nothing else.`;
 }

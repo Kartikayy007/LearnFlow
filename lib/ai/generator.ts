@@ -17,7 +17,6 @@ export async function generateLesson(outline: string): Promise<string> {
       model: 'gemini-2.5-flash',
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: 16384,
       }
     });
 
