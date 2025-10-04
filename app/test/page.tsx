@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { StaggeredMenu } from '@/components/staggered-menu';
 
 interface Lesson {
   id: string;
@@ -255,7 +256,9 @@ export default function TestPage() {
   };
 
   return (
-    <div className="p-6 font-mono bg-background text-foreground min-h-screen">
+    <>
+      <StaggeredMenu />
+      <div className="p-6 font-mono bg-background text-foreground min-h-screen">
       <h1 className="text-3xl font-bold mb-6">LearnFlow Test Page</h1>
 
       <div className="flex gap-4 items-center mb-6">
@@ -488,5 +491,6 @@ export default function TestPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

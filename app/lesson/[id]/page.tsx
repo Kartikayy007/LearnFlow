@@ -11,8 +11,7 @@ import {
   IconPlus,
   IconList,
 } from '@tabler/icons-react';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { ColorCustomizer } from '@/components/color-customizer';
+import { StaggeredMenu } from '@/components/staggered-menu';
 
 export default function LessonViewPage() {
   const params = useParams();
@@ -37,29 +36,22 @@ export default function LessonViewPage() {
   ];
 
   return (
-    <div className="flex h-screen">
-      <Sidebar>
-        <SidebarBody>
-          <div className="flex flex-col h-full justify-between">
-            <div className="flex flex-col gap-4">
-              <div className="mt-8 flex flex-col gap-2">
-                {links.map((link, idx) => (
-                  <SidebarLink key={idx} link={link} />
-                ))}
+    <>
+      <StaggeredMenu />
+      <div className="flex h-screen">
+        <Sidebar>
+          <SidebarBody>
+            <div className="flex flex-col h-full">
+              <div className="flex flex-col gap-4">
+                <div className="mt-8 flex flex-col gap-2">
+                  {links.map((link, idx) => (
+                    <SidebarLink key={idx} link={link} />
+                  ))}
+                </div>
               </div>
             </div>
-
-            <div className="flex flex-col gap-4 pb-4">
-              <div className="border-t border-border pt-4">
-                <ThemeToggle />
-              </div>
-              <div className="border-t border-border pt-4">
-                <ColorCustomizer />
-              </div>
-            </div>
-          </div>
-        </SidebarBody>
-      </Sidebar>
+          </SidebarBody>
+        </Sidebar>
 
       <div className="flex-1 overflow-auto p-10 rounded-tl-2xl bg-background">
         <h1 className="text-4xl font-bold mb-4 text-foreground">
@@ -79,5 +71,6 @@ export default function LessonViewPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

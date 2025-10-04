@@ -1,6 +1,10 @@
+import { StaggeredMenu } from '@/components/staggered-menu';
+
 export default function HomePage() {
   return (
-    <div className="p-10 max-w-4xl mx-auto">
+    <>
+      <StaggeredMenu />
+      <div className="p-10 max-w-4xl mx-auto">
       <h1 className="text-4xl font-bold text-foreground mb-4">LearnFlow API</h1>
       <p className="text-lg text-muted-foreground mb-10">Backend API for generating educational lessons with AI</p>
 
@@ -47,5 +51,6 @@ export default function HomePage() {
         </p>
       </div>
     </div>
+    </>
   );
 }

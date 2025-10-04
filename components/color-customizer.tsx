@@ -110,138 +110,73 @@ export function ColorCustomizer() {
     applyColors(defaultColors);
   };
 
+  // Define presets with names
+  const presets = [
+    { name: 'Amber Dark', colors: { primary: '#f59e0b', primaryForeground: '#000000', secondary: '#262626', secondaryForeground: '#e5e5e5', background: '#0a0a0a', foreground: '#f59e0b', border: '#333333' } },
+    { name: 'Purple Haze', colors: { primary: '#a995c9', primaryForeground: '#1a1823', secondary: '#5a5370', secondaryForeground: '#e0ddef', background: '#1a1823', foreground: '#e0ddef', border: '#5a5370' } },
+    { name: 'Golden Hour', colors: { primary: '#ffbe14', primaryForeground: '#000000', secondary: '#8a4515', secondaryForeground: '#f4f4dd', background: '#111111', foreground: '#ffbe14', border: '#8a4515' } },
+    { name: 'Ocean Blue', colors: { primary: '#155dfc', primaryForeground: '#ffffff', secondary: '#27272a', secondaryForeground: '#fafafa', background: '#0a0a0a', foreground: '#ffffff', border: '#27272a' } },
+    { name: 'Violet Dream', colors: { primary: '#8b5cf6', primaryForeground: '#ffffff', secondary: '#1e1b4b', secondaryForeground: '#e0e7ff', background: '#0f0f0f', foreground: '#e0e7ff', border: '#1e1b4b' } },
+    { name: 'Sunset Glow', colors: { primary: '#fbe2a7', primaryForeground: '#12242e', secondary: '#e4a2b1', secondaryForeground: '#12242e', background: '#12242e', foreground: '#fbe2a7', border: '#4a4a4a' } },
+    { name: 'Spotify', colors: { primary: '#1DB954', primaryForeground: '#ffffff', secondary: '#191414', secondaryForeground: '#1DB954', background: '#121212', foreground: '#ffffff', border: '#282828' } },
+    { name: 'Google', colors: { primary: '#4285F4', primaryForeground: '#ffffff', secondary: '#F4B400', secondaryForeground: '#000000', background: '#202124', foreground: '#e8eaed', border: '#3c4043' } },
+    { name: 'Arc Browser', colors: { primary: '#6366F1', primaryForeground: '#ffffff', secondary: '#312E81', secondaryForeground: '#E0E7FF', background: '#1e1b4b', foreground: '#e0e7ff', border: '#4c4b7d' } },
+    { name: 'Discord', colors: { primary: '#5865F2', primaryForeground: '#ffffff', secondary: '#2C2F33', secondaryForeground: '#ffffff', background: '#36393f', foreground: '#dcddde', border: '#40444b' } },
+    { name: 'Stripe', colors: { primary: '#635BFF', primaryForeground: '#ffffff', secondary: '#F6F9FC', secondaryForeground: '#32325D', background: '#0a0a0a', foreground: '#ffffff', border: '#333333' } },
+    { name: 'Notion', colors: { primary: '#000000', primaryForeground: '#ffffff', secondary: '#ffffff', secondaryForeground: '#000000', background: '#191919', foreground: '#e6e6e5', border: '#373737' } },
+    { name: 'Linear', colors: { primary: '#5E6AD2', primaryForeground: '#ffffff', secondary: '#F4F5F7', secondaryForeground: '#171B26', background: '#0e0e0e', foreground: '#ffffff', border: '#2a2a2a' } },
+    { name: 'Vercel', colors: { primary: '#000000', primaryForeground: '#ffffff', secondary: '#FAFAFA', secondaryForeground: '#000000', background: '#000000', foreground: '#ffffff', border: '#333333' } },
+    { name: 'GitHub Dark', colors: { primary: '#238636', primaryForeground: '#ffffff', secondary: '#0D1117', secondaryForeground: '#C9D1D9', background: '#0d1117', foreground: '#c9d1d9', border: '#30363d' } },
+    { name: 'Slack', colors: { primary: '#4A154B', primaryForeground: '#ffffff', secondary: '#F4EDE4', secondaryForeground: '#1D1C1D', background: '#1a1d21', foreground: '#d1d2d3', border: '#565856' } },
+    { name: 'Twitter/X', colors: { primary: '#1DA1F2', primaryForeground: '#ffffff', secondary: '#14171A', secondaryForeground: '#ffffff', background: '#000000', foreground: '#ffffff', border: '#2f3336' } },
+    { name: 'Instagram', colors: { primary: '#E1306C', primaryForeground: '#ffffff', secondary: '#405DE6', secondaryForeground: '#ffffff', background: '#000000', foreground: '#ffffff', border: '#262626' } },
+    { name: 'Netflix', colors: { primary: '#E50914', primaryForeground: '#ffffff', secondary: '#141414', secondaryForeground: '#ffffff', background: '#141414', foreground: '#ffffff', border: '#222222' } },
+    { name: 'YouTube', colors: { primary: '#FF0000', primaryForeground: '#ffffff', secondary: '#282828', secondaryForeground: '#ffffff', background: '#0f0f0f', foreground: '#f1f1f1', border: '#303030' } },
+    { name: 'Twitch', colors: { primary: '#9146FF', primaryForeground: '#ffffff', secondary: '#0E0E10', secondaryForeground: '#EFEFF1', background: '#0e0e10', foreground: '#efeff1', border: '#1f1f23' } },
+    { name: 'Reddit', colors: { primary: '#FF4500', primaryForeground: '#ffffff', secondary: '#1A1A1B', secondaryForeground: '#D7DADC', background: '#030303', foreground: '#d7dadc', border: '#343536' } },
+    { name: 'LinkedIn', colors: { primary: '#0077B5', primaryForeground: '#ffffff', secondary: '#F3F2EF', secondaryForeground: '#000000', background: '#000000', foreground: '#ffffff', border: '#38434f' } },
+    { name: 'Meta', colors: { primary: '#1877F2', primaryForeground: '#ffffff', secondary: '#F0F2F5', secondaryForeground: '#1C1E21', background: '#18191a', foreground: '#e4e6eb', border: '#3a3b3c' } },
+    { name: 'Amazon', colors: { primary: '#FF9900', primaryForeground: '#000000', secondary: '#232F3E', secondaryForeground: '#ffffff', background: '#0f1111', foreground: '#ffffff', border: '#232f3e' } },
+    { name: 'Microsoft', colors: { primary: '#0078D4', primaryForeground: '#ffffff', secondary: '#F3F2F1', secondaryForeground: '#323130', background: '#1e1e1e', foreground: '#d4d4d4', border: '#464647' } },
+    { name: 'Apple', colors: { primary: '#000000', primaryForeground: '#ffffff', secondary: '#F5F5F7', secondaryForeground: '#1D1D1F', background: '#000000', foreground: '#f5f5f7', border: '#38383d' } },
+    { name: 'Airbnb', colors: { primary: '#FF385C', primaryForeground: '#ffffff', secondary: '#F7F7F7', secondaryForeground: '#222222', background: '#000000', foreground: '#ffffff', border: '#484848' } },
+    { name: 'Uber', colors: { primary: '#000000', primaryForeground: '#ffffff', secondary: '#F3F3F5', secondaryForeground: '#000000', background: '#000000', foreground: '#ffffff', border: '#333333' } },
+    { name: 'Dropbox', colors: { primary: '#0061FF', primaryForeground: '#ffffff', secondary: '#F7F5F2', secondaryForeground: '#1E1919', background: '#061e3c', foreground: '#ffffff', border: '#2c4b7c' } },
+    { name: 'Pinterest', colors: { primary: '#E60023', primaryForeground: '#ffffff', secondary: '#EFEFEF', secondaryForeground: '#111111', background: '#111111', foreground: '#efefef', border: '#2d2d2d' } },
+    { name: 'Snapchat', colors: { primary: '#FFFC00', primaryForeground: '#000000', secondary: '#000000', secondaryForeground: '#ffffff', background: '#000000', foreground: '#ffffff', border: '#2a2a2a' } },
+    { name: 'TikTok', colors: { primary: '#FF0050', primaryForeground: '#ffffff', secondary: '#000000', secondaryForeground: '#ffffff', background: '#000000', foreground: '#ffffff', border: '#2a2a2a' } },
+    { name: 'WhatsApp', colors: { primary: '#25D366', primaryForeground: '#ffffff', secondary: '#075E54', secondaryForeground: '#ffffff', background: '#111b21', foreground: '#e9edef', border: '#2a3942' } },
+    { name: 'Telegram', colors: { primary: '#0088CC', primaryForeground: '#ffffff', secondary: '#F5F5F5', secondaryForeground: '#000000', background: '#0e1621', foreground: '#ffffff', border: '#242f3d' } },
+    { name: 'Signal', colors: { primary: '#3A76F0', primaryForeground: '#ffffff', secondary: '#F6F6F6', secondaryForeground: '#1B1B1B', background: '#000000', foreground: '#ffffff', border: '#303030' } },
+    { name: 'Figma', colors: { primary: '#F24E1E', primaryForeground: '#ffffff', secondary: '#1E1E1E', secondaryForeground: '#ffffff', background: '#2c2c2c', foreground: '#ffffff', border: '#444444' } },
+    { name: 'Adobe CC', colors: { primary: '#FF0000', primaryForeground: '#ffffff', secondary: '#2C2C2C', secondaryForeground: '#ffffff', background: '#252525', foreground: '#fafafa', border: '#3a3a3a' } },
+    { name: 'VS Code', colors: { primary: '#007ACC', primaryForeground: '#ffffff', secondary: '#1E1E1E', secondaryForeground: '#CCCCCC', background: '#1e1e1e', foreground: '#cccccc', border: '#3e3e3e' } },
+    { name: 'Tailwind CSS', colors: { primary: '#06B6D4', primaryForeground: '#ffffff', secondary: '#0F172A', secondaryForeground: '#E2E8F0', background: '#0f172a', foreground: '#e2e8f0', border: '#1e293b' } },
+    { name: 'Next.js', colors: { primary: '#000000', primaryForeground: '#ffffff', secondary: '#ffffff', secondaryForeground: '#000000', background: '#000000', foreground: '#ffffff', border: '#333333' } },
+  ];
+
   const randomizeColors = () => {
-    const presets = [
-      // Original presets with dark backgrounds
-      { primary: '#f59e0b', primaryForeground: '#000000', secondary: '#262626', secondaryForeground: '#e5e5e5', background: '#0a0a0a', foreground: '#f59e0b', border: '#333333' },
-      { primary: '#a995c9', primaryForeground: '#1a1823', secondary: '#5a5370', secondaryForeground: '#e0ddef', background: '#1a1823', foreground: '#e0ddef', border: '#5a5370' },
-      { primary: '#ffbe14', primaryForeground: '#000000', secondary: '#8a4515', secondaryForeground: '#f4f4dd', background: '#111111', foreground: '#ffbe14', border: '#8a4515' },
-      { primary: '#155dfc', primaryForeground: '#ffffff', secondary: '#27272a', secondaryForeground: '#fafafa', background: '#0a0a0a', foreground: '#ffffff', border: '#27272a' },
-      { primary: '#8b5cf6', primaryForeground: '#ffffff', secondary: '#1e1b4b', secondaryForeground: '#e0e7ff', background: '#0f0f0f', foreground: '#e0e7ff', border: '#1e1b4b' },
-      { primary: '#fbe2a7', primaryForeground: '#12242e', secondary: '#e4a2b1', secondaryForeground: '#12242e', background: '#12242e', foreground: '#fbe2a7', border: '#4a4a4a' },
-
-      // Spotify inspired
-      { primary: '#1DB954', primaryForeground: '#ffffff', secondary: '#191414', secondaryForeground: '#1DB954', background: '#121212', foreground: '#ffffff', border: '#282828' },
-
-      // Google inspired - dark theme
-      { primary: '#4285F4', primaryForeground: '#ffffff', secondary: '#F4B400', secondaryForeground: '#000000', background: '#202124', foreground: '#e8eaed', border: '#3c4043' },
-
-      // Arc Browser inspired
-      { primary: '#6366F1', primaryForeground: '#ffffff', secondary: '#312E81', secondaryForeground: '#E0E7FF', background: '#1e1b4b', foreground: '#e0e7ff', border: '#4c4b7d' },
-
-      // Discord inspired
-      { primary: '#5865F2', primaryForeground: '#ffffff', secondary: '#2C2F33', secondaryForeground: '#ffffff', background: '#36393f', foreground: '#dcddde', border: '#40444b' },
-
-      // Stripe inspired - dark theme
-      { primary: '#635BFF', primaryForeground: '#ffffff', secondary: '#F6F9FC', secondaryForeground: '#32325D', background: '#0a0a0a', foreground: '#ffffff', border: '#333333' },
-
-      // Notion inspired - dark theme
-      { primary: '#000000', primaryForeground: '#ffffff', secondary: '#ffffff', secondaryForeground: '#000000', background: '#191919', foreground: '#e6e6e5', border: '#373737' },
-
-      // Linear inspired - dark theme
-      { primary: '#5E6AD2', primaryForeground: '#ffffff', secondary: '#F4F5F7', secondaryForeground: '#171B26', background: '#0e0e0e', foreground: '#ffffff', border: '#2a2a2a' },
-
-      // Vercel inspired - dark theme
-      { primary: '#000000', primaryForeground: '#ffffff', secondary: '#FAFAFA', secondaryForeground: '#000000', background: '#000000', foreground: '#ffffff', border: '#333333' },
-
-      // GitHub Dark inspired
-      { primary: '#238636', primaryForeground: '#ffffff', secondary: '#0D1117', secondaryForeground: '#C9D1D9', background: '#0d1117', foreground: '#c9d1d9', border: '#30363d' },
-
-      // Slack inspired - dark theme
-      { primary: '#4A154B', primaryForeground: '#ffffff', secondary: '#F4EDE4', secondaryForeground: '#1D1C1D', background: '#1a1d21', foreground: '#d1d2d3', border: '#565856' },
-
-      // Twitter/X inspired
-      { primary: '#1DA1F2', primaryForeground: '#ffffff', secondary: '#14171A', secondaryForeground: '#ffffff', background: '#000000', foreground: '#ffffff', border: '#2f3336' },
-
-      // Instagram gradient inspired - dark theme
-      { primary: '#E1306C', primaryForeground: '#ffffff', secondary: '#405DE6', secondaryForeground: '#ffffff', background: '#000000', foreground: '#ffffff', border: '#262626' },
-
-      // Netflix inspired
-      { primary: '#E50914', primaryForeground: '#ffffff', secondary: '#141414', secondaryForeground: '#ffffff', background: '#141414', foreground: '#ffffff', border: '#222222' },
-
-      // YouTube inspired
-      { primary: '#FF0000', primaryForeground: '#ffffff', secondary: '#282828', secondaryForeground: '#ffffff', background: '#0f0f0f', foreground: '#f1f1f1', border: '#303030' },
-
-      // Twitch inspired
-      { primary: '#9146FF', primaryForeground: '#ffffff', secondary: '#0E0E10', secondaryForeground: '#EFEFF1', background: '#0e0e10', foreground: '#efeff1', border: '#1f1f23' },
-
-      // Reddit inspired
-      { primary: '#FF4500', primaryForeground: '#ffffff', secondary: '#1A1A1B', secondaryForeground: '#D7DADC', background: '#030303', foreground: '#d7dadc', border: '#343536' },
-
-      // LinkedIn inspired - dark theme
-      { primary: '#0077B5', primaryForeground: '#ffffff', secondary: '#F3F2EF', secondaryForeground: '#000000', background: '#000000', foreground: '#ffffff', border: '#38434f' },
-
-      // Meta/Facebook inspired - dark theme
-      { primary: '#1877F2', primaryForeground: '#ffffff', secondary: '#F0F2F5', secondaryForeground: '#1C1E21', background: '#18191a', foreground: '#e4e6eb', border: '#3a3b3c' },
-
-      // Amazon inspired - dark theme
-      { primary: '#FF9900', primaryForeground: '#000000', secondary: '#232F3E', secondaryForeground: '#ffffff', background: '#0f1111', foreground: '#ffffff', border: '#232f3e' },
-
-      // Microsoft inspired - dark theme
-      { primary: '#0078D4', primaryForeground: '#ffffff', secondary: '#F3F2F1', secondaryForeground: '#323130', background: '#1e1e1e', foreground: '#d4d4d4', border: '#464647' },
-
-      // Apple inspired - dark theme
-      { primary: '#000000', primaryForeground: '#ffffff', secondary: '#F5F5F7', secondaryForeground: '#1D1D1F', background: '#000000', foreground: '#f5f5f7', border: '#38383d' },
-
-      // Airbnb inspired - dark theme
-      { primary: '#FF385C', primaryForeground: '#ffffff', secondary: '#F7F7F7', secondaryForeground: '#222222', background: '#000000', foreground: '#ffffff', border: '#484848' },
-
-      // Uber inspired - dark theme
-      { primary: '#000000', primaryForeground: '#ffffff', secondary: '#F3F3F5', secondaryForeground: '#000000', background: '#000000', foreground: '#ffffff', border: '#333333' },
-
-      // Dropbox inspired - dark theme
-      { primary: '#0061FF', primaryForeground: '#ffffff', secondary: '#F7F5F2', secondaryForeground: '#1E1919', background: '#061e3c', foreground: '#ffffff', border: '#2c4b7c' },
-
-      // Pinterest inspired - dark theme
-      { primary: '#E60023', primaryForeground: '#ffffff', secondary: '#EFEFEF', secondaryForeground: '#111111', background: '#111111', foreground: '#efefef', border: '#2d2d2d' },
-
-      // Snapchat inspired - dark theme
-      { primary: '#FFFC00', primaryForeground: '#000000', secondary: '#000000', secondaryForeground: '#ffffff', background: '#000000', foreground: '#ffffff', border: '#2a2a2a' },
-
-      // TikTok inspired - dark theme
-      { primary: '#FF0050', primaryForeground: '#ffffff', secondary: '#000000', secondaryForeground: '#ffffff', background: '#000000', foreground: '#ffffff', border: '#2a2a2a' },
-
-      // WhatsApp inspired - dark theme
-      { primary: '#25D366', primaryForeground: '#ffffff', secondary: '#075E54', secondaryForeground: '#ffffff', background: '#111b21', foreground: '#e9edef', border: '#2a3942' },
-
-      // Telegram inspired - dark theme
-      { primary: '#0088CC', primaryForeground: '#ffffff', secondary: '#F5F5F5', secondaryForeground: '#000000', background: '#0e1621', foreground: '#ffffff', border: '#242f3d' },
-
-      // Signal inspired - dark theme
-      { primary: '#3A76F0', primaryForeground: '#ffffff', secondary: '#F6F6F6', secondaryForeground: '#1B1B1B', background: '#000000', foreground: '#ffffff', border: '#303030' },
-
-      // Figma inspired
-      { primary: '#F24E1E', primaryForeground: '#ffffff', secondary: '#1E1E1E', secondaryForeground: '#ffffff', background: '#2c2c2c', foreground: '#ffffff', border: '#444444' },
-
-      // Adobe Creative Cloud inspired
-      { primary: '#FF0000', primaryForeground: '#ffffff', secondary: '#2C2C2C', secondaryForeground: '#ffffff', background: '#252525', foreground: '#fafafa', border: '#3a3a3a' },
-
-      // VS Code inspired
-      { primary: '#007ACC', primaryForeground: '#ffffff', secondary: '#1E1E1E', secondaryForeground: '#CCCCCC', background: '#1e1e1e', foreground: '#cccccc', border: '#3e3e3e' },
-
-      // Tailwind CSS inspired
-      { primary: '#06B6D4', primaryForeground: '#ffffff', secondary: '#0F172A', secondaryForeground: '#E2E8F0', background: '#0f172a', foreground: '#e2e8f0', border: '#1e293b' },
-
-      // Next.js inspired - dark theme
-      { primary: '#000000', primaryForeground: '#ffffff', secondary: '#ffffff', secondaryForeground: '#000000', background: '#000000', foreground: '#ffffff', border: '#333333' },
-    ];
-
     const randomPreset = presets[Math.floor(Math.random() * presets.length)];
+    setColors(randomPreset.colors);
+    localStorage.setItem('customColors', JSON.stringify(randomPreset.colors));
+    applyColors(randomPreset.colors);
+  };
 
-    setColors(randomPreset);
-    localStorage.setItem('customColors', JSON.stringify(randomPreset));
-    applyColors(randomPreset);
+  const applyPreset = (preset: typeof presets[0]) => {
+    setColors(preset.colors);
+    localStorage.setItem('customColors', JSON.stringify(preset.colors));
+    applyColors(preset.colors);
   };
 
   return (
     <div className="flex flex-col gap-4 px-2">
-      <div className="text-sm font-medium text-secondary-foreground dark:text-primary-foreground">
+      <div className="text-sm font-medium dark:text-gray-300 text-gray-700">
         Theme Colors
       </div>
 
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <label className="text-xs text-muted-foreground">Primary</label>
+          <label className="text-xs dark:text-gray-400 text-gray-600">Primary</label>
           <input
             type="color"
             value={colors.primary}
@@ -251,7 +186,7 @@ export function ColorCustomizer() {
         </div>
 
         <div className="flex items-center justify-between">
-          <label className="text-xs text-muted-foreground">Primary Text</label>
+          <label className="text-xs dark:text-gray-400 text-gray-600">Primary Text</label>
           <input
             type="color"
             value={colors.primaryForeground}
@@ -261,7 +196,7 @@ export function ColorCustomizer() {
         </div>
 
         <div className="flex items-center justify-between">
-          <label className="text-xs text-muted-foreground">Secondary</label>
+          <label className="text-xs dark:text-gray-400 text-gray-600">Secondary</label>
           <input
             type="color"
             value={colors.secondary}
@@ -271,7 +206,7 @@ export function ColorCustomizer() {
         </div>
 
         <div className="flex items-center justify-between">
-          <label className="text-xs text-muted-foreground">Secondary Text</label>
+          <label className="text-xs dark:text-gray-400 text-gray-600">Secondary Text</label>
           <input
             type="color"
             value={colors.secondaryForeground}
@@ -281,7 +216,7 @@ export function ColorCustomizer() {
         </div>
 
         <div className="flex items-center justify-between">
-          <label className="text-xs text-muted-foreground">Background</label>
+          <label className="text-xs dark:text-gray-400 text-gray-600">Background</label>
           <input
             type="color"
             value={colors.background}
@@ -291,7 +226,7 @@ export function ColorCustomizer() {
         </div>
 
         <div className="flex items-center justify-between">
-          <label className="text-xs text-muted-foreground">Text</label>
+          <label className="text-xs dark:text-gray-400 text-gray-600">Text</label>
           <input
             type="color"
             value={colors.foreground}
@@ -299,18 +234,45 @@ export function ColorCustomizer() {
             className="w-8 h-8 rounded cursor-pointer border border-border"
           />
         </div>
+
+        <div className="flex items-center justify-between">
+          <label className="text-xs dark:text-gray-400 text-gray-600">Border</label>
+          <input
+            type="color"
+            value={colors.border}
+            onChange={(e) => handleColorChange('border', e.target.value)}
+            className="w-8 h-8 rounded cursor-pointer border border-border"
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <select
+          onChange={(e) => {
+            const preset = presets.find(p => p.name === e.target.value);
+            if (preset) applyPreset(preset);
+          }}
+          className="w-full text-xs bg-background dark:text-white text-gray-900 border border-border rounded px-2 py-1.5 hover:bg-muted transition-colors cursor-pointer"
+        >
+          <option value="">Choose a preset theme...</option>
+          {presets.map((preset) => (
+            <option key={preset.name} value={preset.name}>
+              {preset.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="flex gap-2">
         <button
           onClick={randomizeColors}
-          className="flex-1 text-xs text-muted-foreground hover:text-secondary-foreground dark:hover:text-primary-foreground transition-colors py-1 px-2 border border-border rounded hover:bg-muted"
+          className="flex-1 text-xs dark:text-gray-400 text-gray-600 hover:text-gray-900 dark:hover:text-white transition-colors py-1 px-2 border border-border rounded hover:bg-muted"
         >
           🎲 Randomize
         </button>
         <button
           onClick={resetColors}
-          className="flex-1 text-xs text-muted-foreground hover:text-secondary-foreground dark:hover:text-primary-foreground transition-colors py-1 px-2 border border-border rounded hover:bg-muted"
+          className="flex-1 text-xs dark:text-gray-400 text-gray-600 hover:text-gray-900 dark:hover:text-white transition-colors py-1 px-2 border border-border rounded hover:bg-muted"
         >
           ↺ Reset
         </button>
