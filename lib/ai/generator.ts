@@ -7,14 +7,16 @@ if (process.env.GEMINI_API_KEY) {
   genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 }
 
-export async function generateLesson(outline: string): Promise<string> {
+export async function generateLesson(outline: string, modelType: 'smart' | 'fast' = 'smart'): Promise<string> {
   if (!genAI) {
     return generateMockLesson(outline);
   }
 
   try {
+    const modelName = modelType === 'smart' ? 'gemini-2.5-flash' : 'gemini-1.5-flash';
+
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
+      model: modelName,
       generationConfig: {
         temperature: 0.7,
       }

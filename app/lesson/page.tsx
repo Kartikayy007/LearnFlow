@@ -17,6 +17,7 @@ import GradualBlur from '@/components/GradualBlur';
 import { LessonHero } from '@/components/lesson/LessonHero';
 import { LessonPrompt } from '@/components/lesson/LessonPrompt';
 import { LessonExplore } from '@/components/lesson/LessonExplore';
+import { YourLessons } from '@/components/lesson/YourLessons';
 
 export default function CreateLessonPage() {
   const [colors, setColors] = useState(['#333333', '#ffffff', '#333333']);
@@ -122,6 +123,9 @@ export default function CreateLessonPage() {
             <LessonHero />
             <LessonPrompt input={input} setInput={setInput} />
             <LessonExplore />
+          </div>
+          <div className='-mt-32 mb-24'>
+            <YourLessons />
           </div>
         </div>
 
