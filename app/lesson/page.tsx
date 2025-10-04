@@ -13,16 +13,10 @@ import {
 } from '@tabler/icons-react';
 import { StaggeredMenu } from '@/components/staggered-menu';
 import Aurora from '@/components/ui/Aurora';
-import RotatingText from '../../components/RotatingText';
-import {
-  PromptInput,
-  PromptInputTextarea,
-  PromptInputToolbar,
-  PromptInputSubmit,
-} from "@/components/ui/shadcn-io/ai/prompt-input";
-import { FocusCards } from "@/components/ui/focus-cards";
-import GradualBlurMemo from '@/components/GradualBlur';
 import GradualBlur from '@/components/GradualBlur';
+import { LessonHero } from '@/components/lesson/LessonHero';
+import { LessonPrompt } from '@/components/lesson/LessonPrompt';
+import { LessonExplore } from '@/components/lesson/LessonExplore';
 
 export default function CreateLessonPage() {
   const [colors, setColors] = useState(['#333333', '#ffffff', '#333333']);
@@ -125,71 +119,9 @@ export default function CreateLessonPage() {
           </div>
 
           <div className="absolute inset-0 flex flex-col items-center justify-center space-between p-10 z-10">
-
-            <div className='mb-10 flex flex-col items-center'>
-              <div className='flex items-center'>
-                <h1 className='text-3xl sm:text-4xl md:text-5xl font-bold mr-2'>
-                  Learn
-                </h1>
-                <RotatingText
-                  texts={['Flow', 'Coding', 'Science', 'Everything', 'Anything']}
-                  mainClassName="px-2 sm:px-2 md:px-3 bg-secondary text-secondary-foreground overflow-hidden py-0.5 sm:py-1 md:py-2 justify-center rounded-lg text-3xl sm:text-4xl md:text-5xl font-bold"
-                  staggerFrom={"last"}
-                  initial={{ y: "100%" }}
-                  animate={{ y: 0 }}
-                  exit={{ y: "-120%" }}
-                  staggerDuration={0.025}
-                  splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
-                  transition={{ type: "spring", damping: 30, stiffness: 400 }}
-                  rotationInterval={7000}
-                />
-              </div>
-
-              <p className="text-muted-foreground text-center mt-4 max-w-2xl">
-                AI-Powered Interactive Learning Experience
-              </p>
-            </div>
-
-
-
-            <div className="w-full max-w-2xl">
-              <PromptInput onSubmit={(e) => { e.preventDefault(); console.log('Submitted:', input); }}>
-                <PromptInputTextarea
-                  value={input}
-                  onChange={(e) => setInput(e.currentTarget.value)}
-                  placeholder="What would you like to learn today?"
-                />
-                <PromptInputToolbar>
-                  <PromptInputSubmit disabled={!input.trim()} />
-                </PromptInputToolbar>
-              </PromptInput>
-            </div>
-
-            <div className="w-full mb-8 max-w-5xl mx-auto px-4 md:px-8 mt-10">
-              <h1 className='text-2xl md:text-3xl font-semibold mb-6 text-left'>
-                Explore:
-              </h1>
-              <FocusCards cards={[
-                {
-                  title: "Computer Programming",
-                  src: "https://upload.wikimedia.org/wikipedia/commons/0/0c/ENIAC-changing_a_tube_%28cropped%29.jpg"
-                },
-                {
-                  title: "Science",
-                  src: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/ESO-VLT-Laser-phot-33a-07.jpg/960px-ESO-VLT-Laser-phot-33a-07.jpg"
-                },
-                {
-                  title: "Physics",
-                  src: "https://upload.wikimedia.org/wikipedia/commons/a/af/Einstein1921_by_F_Schmutzer_2.jpg"
-                }
-              ]} />
-
-
-            </div>
-
-            <div>
-              
-            </div>
+            <LessonHero />
+            <LessonPrompt input={input} setInput={setInput} />
+            <LessonExplore />
           </div>
         </div>
 
