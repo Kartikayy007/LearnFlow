@@ -7,9 +7,13 @@ if (process.env.GEMINI_API_KEY) {
   genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 }
 
-export async function generateLesson(outline: string, modelType: 'smart' | 'fast' = 'smart'): Promise<string> {
+export async function generateLesson(outline: string, modelType: 'smart' | 'fast' = 'smart'): Promise<{ content: string; title: string }> {
   if (!genAI) {
-    return generateMockLesson(outline);
+    const mockCode = generateMockLesson(outline);
+    return {
+      content: mockCode,
+      title: extractTitleFromCode(mockCode) || outline.substring(0, 50)
+    };
   }
 
   try {
@@ -34,10 +38,20 @@ export async function generateLesson(outline: string, modelType: 'smart' | 'fast
     const code = extractCodeFromResponse(content);
     validateGeneratedCode(code);
 
-    return code;
+    const title = extractTitleFromCode(code) || outline.substring(0, 50);
+
+    return { content: code, title };
   } catch (error) {
     throw new Error('Failed to generate lesson content');
   }
+}
+
+function extractTitleFromCode(code: string): string | null {
+  const titleMatch = code.match(/\/\/\s*LESSON_TITLE:\s*(.+)/i);
+  if (titleMatch) {
+    return titleMatch[1].trim();
+  }
+  return null;
 }
 
 function extractCodeFromResponse(content: string): string {

@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { outline } = body;
+    const { outline, model = 'smart' } = body;
 
     if (!outline || typeof outline !== 'string') {
       return NextResponse.json(
@@ -18,21 +18,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Step 1: Create database entry with 'generating' status
     const lesson = await createLesson({ outline });
     lessonId = lesson.id;
 
     try {
-      // Step 2: Generate content with AI
-      const content = await generateLesson(outline);
+      const result = await generateLesson(outline, model);
 
-      // Step 3: Update database with generated content
       await updateLesson(lessonId, {
-        content,
+        content: result.content,
+        title: result.title,
         status: 'generated'
       });
 
-      // Step 4: Return lesson ID for retrieval
       return NextResponse.json({
         success: true,
         lessonId,
@@ -40,7 +37,6 @@ export async function POST(request: NextRequest) {
       });
 
     } catch (generationError) {
-      // Update database with failed status if generation fails
       await updateLesson(lessonId, {
         status: 'failed',
         error_message: generationError instanceof Error ? generationError.message : 'Unknown generation error'

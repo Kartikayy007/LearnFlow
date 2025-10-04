@@ -93,7 +93,7 @@ export function YourLessons() {
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 md:px-8">
+    <div className="w-full max-w-6xl mx-auto px-4 md:px-8 cursor-pointer">
       <h1 className='text-3xl font-bold text-foreground mb-6 text-left'>
         Your Lessons
       </h1>
@@ -101,7 +101,7 @@ export function YourLessons() {
         {lessons.map((lesson) => (
           <div
             key={lesson.id}
-            onClick={() => router.push(`/lesson/${lesson.id}`)}
+            onClick={() => router.push(`/lessons/${lesson.id}`)}
             className="bg-card border border-border rounded-lg p-6 hover:border-primary transition-colors cursor-pointer"
           >
             <div className="flex items-start justify-between mb-3">

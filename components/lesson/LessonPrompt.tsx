@@ -105,7 +105,7 @@ export function LessonPrompt({ input, setInput }: LessonPromptProps) {
         setStatus('Lesson generated successfully!');
         setInput('');
         setTimeout(() => {
-          router.push(`/lesson/${data.lessonId}`);
+          router.push(`/lessons/${data.lessonId}`);
         }, 1000);
       } else {
         setStatus('Failed to generate lesson');

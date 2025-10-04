@@ -42,6 +42,7 @@ export async function updateLesson(
   updates: {
     status?: 'generating' | 'generated' | 'failed';
     content?: string;
+    title?: string;
     error_message?: string;
   }
 ) {
