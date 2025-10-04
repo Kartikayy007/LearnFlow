@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { Palette } from 'lucide-react';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { ColorCustomizer } from '@/components/color-customizer';
 
 export function StaggeredMenu() {
@@ -96,14 +95,14 @@ export function StaggeredMenu() {
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed top-4 right-4 z-50 p-3 rounded-lg transition-all duration-300 shadow-lg ${
           isOpen
-            ? 'bg-background dark:text-white text-black border border-border'
+            ? 'bg-background text-white border border-border'
             : 'bg-primary text-primary-foreground hover:opacity-90'
         }`}
         aria-label="Toggle theme menu"
       >
         <Palette
           className={`w-6 h-6 transition-transform duration-300 ${
-            isOpen ? 'rotate-180' : ''
+            isOpen ? 'scale(0.5)' : ''
           }`}
         />
       </button>
@@ -115,7 +114,6 @@ export function StaggeredMenu() {
         onClick={() => setIsOpen(false)}
       />
 
-      {/* Menu Container */}
       <div
         ref={menuRef}
         className="fixed right-0 top-0 h-full w-96 bg-gradient-to-b from-background via-background to-background/95 border-l border-border z-40 transform translate-x-full overflow-y-auto shadow-2xl"
@@ -124,25 +122,16 @@ export function StaggeredMenu() {
         <div className="p-6 pt-20">
           {/* Menu Title */}
           <div ref={addToRefs} className="mb-8">
-            <h2 className="text-2xl font-bold dark:text-white text-gray-900">Theme Settings</h2>
-            <p className="text-sm dark:text-gray-400 text-gray-600 mt-1">
+            <h2 className="text-2xl font-bold text-white">Theme Settings</h2>
+            <p className="text-sm text-gray-400 mt-1">
               Customize your app appearance
             </p>
           </div>
 
-          {/* Theme Toggle Section */}
-          <div ref={addToRefs} className="mb-8">
-            <h3 className="text-lg font-semibold dark:text-white text-gray-900 mb-4">
-              Appearance
-            </h3>
-            <div className="bg-card rounded-lg p-4 border border-border">
-              <ThemeToggle />
-            </div>
-          </div>
 
           {/* Color Customizer Section */}
           <div ref={addToRefs} className="mb-8">
-            <h3 className="text-lg font-semibold dark:text-white text-gray-900 mb-4">
+            <h3 className="text-lg font-semibold text-white mb-4">
               Color Scheme
             </h3>
             <div className="bg-card rounded-lg p-4 border border-border">

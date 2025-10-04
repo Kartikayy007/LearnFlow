@@ -5,7 +5,7 @@ import {
   Sidebar,
   SidebarBody,
   SidebarLink,
-} from '@/components/ui/sidebar';
+} from '@/components/sidebar';
 import {
   IconHome,
   IconPlus,
