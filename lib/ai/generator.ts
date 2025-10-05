@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { SYSTEM_PROMPT, createUserPrompt } from './prompts';
+import { langfuse } from '../tracing/langfuse';
 
 let genAI: GoogleGenerativeAI | null = null;
 
@@ -9,15 +10,30 @@ if (process.env.GEMINI_API_KEY) {
 
 export async function generateLesson(outline: string, modelType: 'smart' | 'fast' = 'smart'): Promise<{ content: string; title: string }> {
   if (!genAI) {
-    const mockCode = generateMockLesson(outline);
-    return {
-      content: mockCode,
-      title: extractTitleFromCode(mockCode) || outline.substring(0, 50)
-    };
+    throw new Error('Gemini API key is not configured. Please add GEMINI_API_KEY to your environment variables.');
   }
+
+  const trace = langfuse?.trace({
+    name: 'lesson-generation-workflow',
+    metadata: { outline, modelType },
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let generation: any = null;
 
   try {
     const modelName = modelType === 'smart' ? 'gemini-2.5-flash' : 'gemini-1.5-flash';
+    const userPrompt = createUserPrompt(outline);
+
+    generation = trace?.generation({
+      name: 'gemini-lesson-generation',
+      model: modelName,
+      modelParameters: { temperature: 0.7 },
+      input: {
+        systemPrompt: SYSTEM_PROMPT,
+        userPrompt: userPrompt,
+      },
+    });
 
     const model = genAI.getGenerativeModel({
       model: modelName,
@@ -26,7 +42,7 @@ export async function generateLesson(outline: string, modelType: 'smart' | 'fast
       }
     });
 
-    const prompt = `${SYSTEM_PROMPT}\n\n${createUserPrompt(outline)}`;
+    const prompt = `${SYSTEM_PROMPT}\n\n${userPrompt}`;
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const content = response.text();
@@ -35,15 +51,63 @@ export async function generateLesson(outline: string, modelType: 'smart' | 'fast
       throw new Error('No content generated');
     }
 
+    generation?.end({ output: content });
+
+    const extractSpan = trace?.span({
+      name: 'extract-code-and-title',
+      input: content,
+    });
+
     const code = extractCodeFromResponse(content);
+    const title = extractTitleFromCode(code) || outline.substring(0, 50);
+
+    extractSpan?.end({ output: { code, title } });
+
+    const validateSpan = trace?.span({
+      name: 'validate-code',
+      input: code,
+    });
+
     validateGeneratedCode(code);
 
-    const title = extractTitleFromCode(code) || outline.substring(0, 50);
+    validateSpan?.end({ output: { valid: true } });
 
     return { content: code, title };
   } catch (error) {
-    throw new Error('Failed to generate lesson content');
+    const errorMessage = (error as Error).message;
+    generation?.end({ statusMessage: errorMessage });
+
+    // Clean up error message for user display
+    const cleanError = cleanErrorMessage(errorMessage);
+    throw new Error(cleanError);
+  } finally {
+    await langfuse?.flushAsync();
   }
+}
+
+function cleanErrorMessage(message: string): string {
+  // Extract the actual error message from Google API errors
+  if (message.includes('API key not valid')) {
+    return 'Invalid API key. Please check your configuration.';
+  }
+  if (message.includes('quota')) {
+    return 'API quota exceeded. Please try again later.';
+  }
+  if (message.includes('400 Bad Request')) {
+    return 'Invalid request. Please check your input and try again.';
+  }
+  if (message.includes('403')) {
+    return 'Access denied. Please check your API key permissions.';
+  }
+  if (message.includes('429')) {
+    return 'Too many requests. Please wait a moment and try again.';
+  }
+  if (message.includes('500') || message.includes('503')) {
+    return 'Service temporarily unavailable. Please try again.';
+  }
+
+  // Return original if no pattern matches
+  return message || 'Failed to generate lesson content';
 }
 
 function extractTitleFromCode(code: string): string | null {
@@ -83,269 +147,3 @@ function validateGeneratedCode(code: string): void {
   }
 }
 
-function generateMockLesson(outline: string): string {
-  const isQuiz = outline.toLowerCase().includes('quiz');
-  const isMath = outline.toLowerCase().includes('math') ||
-                outline.toLowerCase().includes('division') ||
-                outline.toLowerCase().includes('multiplication');
-  const isCount = outline.toLowerCase().includes('count');
-
-  if (isQuiz) {
-    return generateMockQuiz(outline);
-  } else if (isMath) {
-    return generateMockMathLesson(outline);
-  } else if (isCount) {
-    return generateMockCountingLesson();
-  }
-
-  return `export default function LessonComponent() {
-  return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">${outline}</h1>
-      <div className="bg-blue-50 rounded-lg p-6">
-        <p className="text-lg mb-4">This is a sample lesson about: ${outline}</p>
-        <p className="text-gray-600">
-          The actual lesson content will be generated by AI when the Gemini API key is configured.
-        </p>
-      </div>
-    </div>
-  );
-}`;
-}
-
-function generateMockQuiz(outline: string): string {
-  return `import { useState } from 'react';
-
-export default function LessonComponent() {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [score, setScore] = useState(0);
-  const [showResults, setShowResults] = useState(false);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-
-  const questions = [
-    {
-      question: "What is 2 + 2?",
-      options: ["3", "4", "5", "6"],
-      correct: 1
-    },
-    {
-      question: "What is the capital of France?",
-      options: ["London", "Berlin", "Paris", "Madrid"],
-      correct: 2
-    },
-    {
-      question: "What color is the sky?",
-      options: ["Green", "Blue", "Red", "Yellow"],
-      correct: 1
-    }
-  ];
-
-  const handleAnswer = (index: number) => {
-    setSelectedAnswer(index);
-    if (index === questions[currentQuestion].correct) {
-      setScore(score + 1);
-    }
-  };
-
-  const nextQuestion = () => {
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-      setSelectedAnswer(null);
-    } else {
-      setShowResults(true);
-    }
-  };
-
-  if (showResults) {
-    return (
-      <div className="p-8 max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Quiz Complete!</h1>
-        <div className="bg-green-50 rounded-lg p-6">
-          <p className="text-2xl mb-4">Your Score: {score} / {questions.length}</p>
-          <button
-            onClick={() => {
-              setCurrentQuestion(0);
-              setScore(0);
-              setShowResults(false);
-              setSelectedAnswer(null);
-            }}
-            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Sample Quiz</h1>
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <div className="mb-4">
-          <span className="text-sm text-gray-500">
-            Question {currentQuestion + 1} of {questions.length}
-          </span>
-        </div>
-        <h2 className="text-xl font-semibold mb-4">
-          {questions[currentQuestion].question}
-        </h2>
-        <div className="space-y-2 mb-6">
-          {questions[currentQuestion].options.map((option, index) => (
-            <button
-              key={index}
-              onClick={() => handleAnswer(index)}
-              className={
-                selectedAnswer === index
-                  ? index === questions[currentQuestion].correct
-                    ? 'w-full p-3 text-left rounded border bg-green-100 border-green-500'
-                    : 'w-full p-3 text-left rounded border bg-red-100 border-red-500'
-                  : 'w-full p-3 text-left rounded border border-gray-300 hover:bg-gray-50'
-              }
-              disabled={selectedAnswer !== null}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-        {selectedAnswer !== null && (
-          <button
-            onClick={nextQuestion}
-            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-          >
-            {currentQuestion < questions.length - 1 ? 'Next Question' : 'See Results'}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}`;
-}
-
-function generateMockMathLesson(outline: string): string {
-  return `import { useState } from 'react';
-
-export default function LessonComponent() {
-  const [problem, setProblem] = useState({ a: 12, b: 3, answer: 4 });
-  const [userAnswer, setUserAnswer] = useState('');
-  const [feedback, setFeedback] = useState('');
-
-  const checkAnswer = () => {
-    if (parseInt(userAnswer) === problem.answer) {
-      setFeedback('Correct! Well done!');
-    } else {
-      setFeedback('Try again. Think about how many times ' + problem.b + ' goes into ' + problem.a);
-    }
-  };
-
-  const newProblem = () => {
-    const b = Math.floor(Math.random() * 9) + 2;
-    const answer = Math.floor(Math.random() * 9) + 2;
-    const a = b * answer;
-    setProblem({ a, b, answer });
-    setUserAnswer('');
-    setFeedback('');
-  };
-
-  return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Division Practice</h1>
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <div className="text-4xl font-bold text-center mb-6">
-          {problem.a} ÷ {problem.b} = ?
-        </div>
-        <div className="flex justify-center gap-4 mb-4">
-          <input
-            type="number"
-            value={userAnswer}
-            onChange={(e) => setUserAnswer(e.target.value)}
-            className="px-4 py-2 border rounded text-xl w-32"
-            placeholder="Answer"
-          />
-          <button
-            onClick={checkAnswer}
-            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-          >
-            Check
-          </button>
-        </div>
-        {feedback && (
-          <div className={
-            feedback.includes('Correct')
-              ? 'text-center mb-4 text-lg text-green-600'
-              : 'text-center mb-4 text-lg text-orange-600'
-          }>
-            {feedback}
-          </div>
-        )}
-        <div className="text-center">
-          <button
-            onClick={newProblem}
-            className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
-          >
-            New Problem
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}`;
-}
-
-function generateMockCountingLesson(): string {
-  return `import { useState } from 'react';
-
-export default function LessonComponent() {
-  const [count, setCount] = useState(1);
-  const maxCount = 20;
-
-  return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Let's Count Together!</h1>
-      <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-8">
-        <div className="text-6xl font-bold text-center mb-8 text-blue-600">
-          {count}
-        </div>
-        <div className="grid grid-cols-10 gap-2 mb-8">
-          {Array.from({ length: maxCount }, (_, i) => i + 1).map((num) => (
-            <div
-              key={num}
-              className={
-                num <= count
-                  ? 'w-12 h-12 rounded-full flex items-center justify-center font-bold bg-blue-500 text-white'
-                  : 'w-12 h-12 rounded-full flex items-center justify-center font-bold bg-gray-200 text-gray-400'
-              }
-            >
-              {num}
-            </div>
-          ))}
-        </div>
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={() => setCount(Math.max(1, count - 1))}
-            className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 text-xl"
-            disabled={count <= 1}
-          >
-            ← Previous
-          </button>
-          <button
-            onClick={() => setCount(Math.min(maxCount, count + 1))}
-            className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 text-xl"
-            disabled={count >= maxCount}
-          >
-            Next →
-          </button>
-        </div>
-        <div className="text-center mt-6">
-          <button
-            onClick={() => setCount(1)}
-            className="text-gray-500 underline"
-          >
-            Start Over
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}`;
-}

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import ButtonCrossArrow from "./ButtonCrossArrow";
+import Link from "next/link";
 
 export const Card = React.memo(
   ({
@@ -15,30 +16,38 @@ export const Card = React.memo(
     index: number;
     hovered: number | null;
     setHovered: React.Dispatch<React.SetStateAction<number | null>>;
-  }) => (
-    <div
-      onMouseEnter={() => setHovered(index)}
-      onMouseLeave={() => setHovered(null)}
-      className={cn(
-        "rounded-lg relative bg-card overflow-hidden h-20 md:h-60 w-full transition-all duration-300 ease-out",
-        hovered !== null && hovered !== index && "blur-sm scale-[0.98]"
-      )}
-    >
-      <img
-        src={card.src}
-        alt={card.title}
-        className="object-cover absolute inset-0"
-      />
+  }) => {
+    const content = (
       <div
+        onMouseEnter={() => setHovered(index)}
+        onMouseLeave={() => setHovered(null)}
         className={cn(
-          "absolute inset-0 bg-background/50 flex items-end justify-start p-4 transition-opacity duration-300",
-          hovered === index ? "opacity-100" : "opacity-0"
+          "rounded-lg relative bg-card overflow-hidden h-20 md:h-60 w-full transition-all duration-300 ease-out",
+          hovered !== null && hovered !== index && "blur-sm scale-[0.98]"
         )}
       >
-        <ButtonCrossArrow text={card.title} />
+        <img
+          src={card.src}
+          alt={card.title}
+          className="object-cover absolute inset-0"
+        />
+        <div
+          className={cn(
+            "absolute inset-0 bg-background/50 flex items-end justify-start p-4 transition-opacity duration-300",
+            hovered === index ? "opacity-100" : "opacity-0"
+          )}
+        >
+          <ButtonCrossArrow text={card.title} />
+        </div>
       </div>
-    </div>
-  )
+    );
+
+    if (card.href) {
+      return <Link href={card.href}>{content}</Link>;
+    }
+
+    return content;
+  }
 );
 
 Card.displayName = "Card";
@@ -46,6 +55,7 @@ Card.displayName = "Card";
 type Card = {
   title: string;
   src: string;
+  href?: string;
 };
 
 export function FocusCards({ cards }: { cards: Card[] }) {

@@ -15,6 +15,17 @@ import {
 } from "@/components/ui/shadcn-io/ai/prompt-input";
 import { Brain, Zap } from 'lucide-react';
 import { MultiStepLoader } from '@/components/ui/multi-step-loader';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
+import FuzzyText from '@/components/FuzzyText';
 
 const loadingStates = [
   { text: "Analyzing your topic..." },
@@ -80,14 +91,14 @@ export function LessonPrompt({ input, setInput }: LessonPromptProps) {
   const router = useRouter();
   const [model, setModel] = useState('smart');
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState('');
+  const [errorDrawerOpen, setErrorDrawerOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
     setLoading(true);
-    setStatus('Generating lesson...');
 
     try {
       const response = await fetch('/api/lessons/generate', {
@@ -102,17 +113,19 @@ export function LessonPrompt({ input, setInput }: LessonPromptProps) {
       const data = await response.json();
 
       if (data.success && data.lessonId) {
-        setStatus('Lesson generated successfully!');
         setInput('');
         setTimeout(() => {
           router.push(`/lessons/${data.lessonId}`);
         }, 1000);
       } else {
-        setStatus('Failed to generate lesson');
+        const errorMsg = data.details || data.error || 'Failed to generate lesson';
+        setErrorMessage(errorMsg);
+        setErrorDrawerOpen(true);
         setLoading(false);
       }
     } catch {
-      setStatus('Error generating lesson');
+      setErrorMessage('Something went wrong. Please try again.');
+      setErrorDrawerOpen(true);
       setLoading(false);
     }
   };
@@ -152,12 +165,41 @@ export function LessonPrompt({ input, setInput }: LessonPromptProps) {
             <PromptInputSubmit disabled={!input.trim() || loading} />
           </PromptInputToolbar>
         </PromptInput>
-        {status && !loading && (
-          <p className="text-sm text-center mt-2 text-muted-foreground">
-            {status}
-          </p>
-        )}
       </div>
+
+      <Drawer open={errorDrawerOpen} onOpenChange={setErrorDrawerOpen}>
+        <DrawerContent>
+          <DrawerHeader className="flex flex-col items-center">
+            <DrawerTitle className="sr-only">Error</DrawerTitle>
+            <DrawerDescription className="sr-only">An error occurred while generating your lesson</DrawerDescription>
+            <div className="flex flex-col items-center justify-center py-8">
+              <FuzzyText
+                fontSize="2rem"
+                color="#ffff"
+                baseIntensity={0.1}
+                hoverIntensity={0.2}
+              >
+                {errorMessage}
+              </FuzzyText>
+            </div>
+          </DrawerHeader>
+          <DrawerFooter className="flex flex-row justify-center gap-4">
+            <DrawerClose asChild>
+              <Button variant="outline" className="w-32">Close</Button>
+            </DrawerClose>
+            <DrawerClose asChild>
+              <Button
+                onClick={() => {
+                  setErrorDrawerOpen(false);
+                }}
+                className="w-32"
+              >
+                Try Again
+              </Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 }
