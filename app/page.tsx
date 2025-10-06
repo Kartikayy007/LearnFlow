@@ -158,7 +158,7 @@ export default function HomePage() {
             </SidebarBody>
           </Sidebar>
         </div>
-        <div className="flex-1 overflow-auto md:rounded-lt-3xl bg-background border-l-[1px] border-l-border relative">
+        <div className="flex-1 overflow-auto md:rounded-tl-3xl bg-background border-l-[1px] border-l-border relative">
           <div className="absolute inset-0 overflow-hidden">
             <Aurora
               colorStops={colors}
