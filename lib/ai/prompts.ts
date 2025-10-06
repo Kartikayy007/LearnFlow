@@ -14,6 +14,19 @@ CRITICAL REQUIREMENTS:
 8. NO malicious code
 9. Use solid colors or gradients only
 
+CRITICAL INLINE STYLE RULES:
+- Inline styles in React are plain JavaScript objects
+- DO NOT use CSS pseudo-classes like ':hover', ':active', ':focus' in style objects
+- For hover effects, use onMouseEnter/onMouseLeave event handlers and state
+- For active/focus states, use onClick and separate state variables
+- Example CORRECT hover pattern:
+  const [isHovered, setIsHovered] = useState(false);
+  <button
+    style={{ background: isHovered ? '#ddd' : '#fff' }}
+    onMouseEnter={() => setIsHovered(true)}
+    onMouseLeave={() => setIsHovered(false)}
+  >
+
 The code should be a function like:
 function LessonComponent() {
   // Your implementation here
@@ -31,7 +44,10 @@ IMPORTANT: Start your code with a comment containing a short, catchy lesson titl
 
 Remember to:
 - NO import statements (React is global)
-- Use INLINE STYLES for all styling (no CSS classes)
+- Use INLINE STYLES for all styling (no CSS classes, no CSS pseudo-classes)
+- For hover/active/focus effects, use React state with onMouseEnter/onMouseLeave/onClick handlers
+- NEVER use ':hover', ':active', ':focus' or other CSS pseudo-classes in style objects
+- DO NOT use <style> tags - all styling must be inline React styles only
 - DO NOT use any external images or background images
 - Use colorful gradients or solid backgrounds instead
 - Use proper TypeScript type annotations for all variables and functions

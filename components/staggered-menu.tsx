@@ -92,7 +92,7 @@ export function StaggeredMenu() {
     <>
      <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed top-4 right-4 z-50 p-3 rounded-lg transition-all duration-300 shadow-lg ${
+        className={`fixed top-4 right-4 z-50 p-3 rounded-lg transition-all duration-300 shadow-lg  ${
           isOpen
             ? 'bg-background text-white border border-border'
             : 'bg-primary text-primary-foreground hover:opacity-90'
@@ -108,7 +108,7 @@ export function StaggeredMenu() {
 
      <div
         ref={overlayRef}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 invisible opacity-0"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 invisible opacity-0"
         onClick={() => setIsOpen(false)}
       />
 

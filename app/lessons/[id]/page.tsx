@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import BlurText from '@/components/ui/BlurText';
-import Cubes from '@/components/Cubes';
+import { Loader } from '@/components/ui/shadcn-io/ai/loader';
 import ShinyText from '@/components/ui/ShinyText';
 import FuzzyText from '@/components/FuzzyText';
 import Galaxy from '@/components/Galaxy';
@@ -208,9 +208,8 @@ export default function LessonViewPage() {
   const getIframeContent = () => {
     if (!jsCode) return '';
 
-    const encoder = new TextEncoder();
-    const data = encoder.encode(jsCode);
-    const encodedCode = btoa(String.fromCharCode(...data));
+    // Properly encode UTF-8 string to base64
+    const encodedCode = btoa(unescape(encodeURIComponent(jsCode)));
 
     return `
       <!DOCTYPE html>
@@ -235,13 +234,12 @@ export default function LessonViewPage() {
             const { useState, useEffect, useRef, useCallback, useMemo } = React;
             try {
               const encodedCode = "${encodedCode}";
-              const decodedBytes = atob(encodedCode);
-              const jsCode = new TextDecoder().decode(new Uint8Array([...decodedBytes].map(char => char.charCodeAt(0))));
+              const jsCode = decodeURIComponent(escape(atob(encodedCode)));
               eval(jsCode);
               const root = ReactDOM.createRoot(document.getElementById('root'));
               root.render(React.createElement(LessonComponent));
             } catch (err) {
-              document.body.innerHTML = '<div style="color: red; padding: 20px;">Error: ' + err.message + '</div>';
+              document.body.innerHTML = '<div style="color: red; padding: 20px; font-family: monospace;"><h3>❌ Error in Generated Code:</h3><p><strong>' + err.message + '</strong></p><p style="color: #666; font-size: 0.9em;">Try regenerating this lesson with a clearer prompt.</p></div>';
             }
           </script>
         </body>
@@ -316,7 +314,7 @@ export default function LessonViewPage() {
 
   if (topic) {
     return (
-      <div className="flex-1 overflow-auto p-10 bg-background rounded-l-3xl border-l-[1px] border-l-border rounded-bl-3xl relative">
+      <div className="p-4 md:p-10 bg-background rounded-l-3xl border-l-[1px] border-l-border rounded-bl-3xl relative h-full">
         <div className="absolute inset-0 pointer-events-none">
           {renderBackground()}
         </div>
@@ -326,9 +324,9 @@ export default function LessonViewPage() {
             delay={70}
             animateBy="words"
             direction="bottom"
-            className="text-5xl font-bold mb-10 text-foreground"
+            className="text-3xl md:text-5xl font-bold mb-6 md:mb-10 text-foreground text-center"
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-6xl w-full px-4 md:px-0">
             {topic.cards.map((card) => (
               <Link key={card.title} href={`/lessons/${card.lessonId}`}>
                 <div className="bg-card border border-border rounded-lg p-6 hover:border-primary transition-colors cursor-pointer">
@@ -356,9 +354,14 @@ export default function LessonViewPage() {
   }
 
   return (
-    <div className="flex-1 overflow-auto p-10 bg-background rounded-l-3xl border-l-[1px] border-l-border rounded-bl-3xl">
+    <div className="p-4 md:p-10 bg-background rounded-l-3xl border-l-[1px] border-l-border rounded-bl-3xl h-full">
       {loading && (
-        <div className="text-muted-foreground">Loading lesson...</div>
+        <div className="flex flex-col items-center justify-center min-h-[70vh] gap-4">
+          <Loader size={48} />
+          <h1 className='bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent bg-[length:200%_auto] animate-shimmer'>
+            Please wait...
+          </h1>
+        </div>
       )}
 
       {error && (
@@ -368,11 +371,11 @@ export default function LessonViewPage() {
       {lesson && (
         <>
           {lesson.status === 'generating' && (
-            <div className="flex flex-col items-center justify-center min-h-[70vh]">
-              <Cubes />
-              <div className="mt-8">
-                <ShinyText text="generating" speed={3} className="text-4xl" />
-              </div>
+            <div className="flex flex-col items-center justify-center min-h-[70vh] gap-4">
+              <Loader size={48} />
+              <h1 className='bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent bg-[length:200%_auto] animate-shimmer'>
+                Generating your lesson...
+              </h1>
             </div>
           )}
 
@@ -396,7 +399,7 @@ export default function LessonViewPage() {
                 delay={70}
                 animateBy="words"
                 direction="bottom"
-                className="text-5xl font-bold mb-2 text-foreground"
+                className="text-3xl md:text-5xl font-bold mb-2 text-foreground"
               />
 
               <p className="text-muted-foreground mb-6 italic">&ldquo;{lesson.outline}&rdquo;</p>

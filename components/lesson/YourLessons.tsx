@@ -93,9 +93,11 @@ export function YourLessons() {
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 md:px-8 cursor-pointer">
-      <h1 className='text-3xl font-bold text-foreground mb-6 text-left'>
-        Your Lessons
+    <div className="w-full mb-32 max-w-5xl mx-auto cursor-pointer px-4 sm:px-8 lg:px-0 mt-32 md:-mt-32">
+      <h1 className='text-3xl font-bold text-foreground mb-6 text-left relative inline-block'>
+        <span className="relative">
+          Your Lessons
+        </span>
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {lessons.map((lesson) => (

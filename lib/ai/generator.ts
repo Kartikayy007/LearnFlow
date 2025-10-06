@@ -145,5 +145,20 @@ function validateGeneratedCode(code: string): void {
       throw new Error('Generated code contains forbidden patterns');
     }
   }
+
+  // Check for invalid CSS pseudo-classes in style objects
+  const invalidStylePatterns = [
+    /['"]:hover['"]\s*:/,
+    /['"]:active['"]\s*:/,
+    /['"]:focus['"]\s*:/,
+    /['"]:visited['"]\s*:/,
+    /['"]:nth-child['"]\s*:/,
+  ];
+
+  for (const pattern of invalidStylePatterns) {
+    if (pattern.test(code)) {
+      throw new Error('Invalid CSS pseudo-classes in inline styles detected. Use React state with event handlers instead.');
+    }
+  }
 }
 

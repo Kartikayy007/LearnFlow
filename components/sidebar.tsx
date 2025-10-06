@@ -114,16 +114,14 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden  items-center justify-between bg-secondary dark:bg-primary w-full"
+          "h-10 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-transparent absolute top-4 left-4 z-50"
         )}
         {...props}
       >
-        <div className="flex justify-end z-20 w-full">
-          <IconMenu2
-            className="text-secondary-foreground dark:text-primary-foreground"
-            onClick={() => setOpen(!open)}
-          />
-        </div>
+        <IconMenu2
+          className="text-foreground cursor-pointer"
+          onClick={() => setOpen(!open)}
+        />
         <AnimatePresence>
           {open && (
             <motion.div
@@ -135,7 +133,7 @@ export const MobileSidebar = ({
                 ease: "easeInOut",
               }}
               className={cn(
-                "fixed h-full w-full inset-0 bg-secondary dark:bg-primary p-10 z-[100] flex flex-col justify-between",
+                "fixed h-full w-full inset-0 bg-secondary dark:bg-primary p-10 z-[200] flex flex-col justify-between",
                 className
               )}
             >

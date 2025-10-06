@@ -150,14 +150,16 @@ export default function HomePage() {
     <div className="bg-primary">
       <StaggeredMenu />
       <div className="flex h-screen w-full">
-        <Sidebar>
-          <SidebarBody>
-            <SidebarContent recentLessons={recentLessons} />
-          </SidebarBody>
-        </Sidebar>
 
-        <div className="flex-1 overflow-auto rounded-l-3xl bg-background border-l-[1px] border-l-border rounded-bl-3xl relative">
-          <div className="h-full w-[96.2vw] overflow-hidden scrollbar-hide">
+        <div className='md:flex z-1000'>
+          <Sidebar>
+            <SidebarBody>
+              <SidebarContent recentLessons={recentLessons} />
+            </SidebarBody>
+          </Sidebar>
+        </div>
+        <div className="flex-1 overflow-auto md:rounded-l-3xl bg-background border-l-[1px] border-l-border md:rounded-bl-3xl relative">
+          <div className="h-full w-full overflow-hidden scrollbar-hide">
             <Aurora
               colorStops={colors}
               blend={1.0}
@@ -166,14 +168,12 @@ export default function HomePage() {
             />
           </div>
 
-          <div className="absolute inset-0 flex flex-col items-center justify-center space-between p-10 z-10">
+          <div className="absolute inset-0 flex flex-col items-center justify-center space-between p-4 md:p-10">
             <LessonHero />
             <LessonPrompt input={input} setInput={setInput} />
             <LessonExplore />
           </div>
-          <div className='-mt-32 mb-24'>
             <YourLessons />
-          </div>
         </div>
 
         <GradualBlur
@@ -185,6 +185,7 @@ export default function HomePage() {
           curve="bezier"
           exponential={true}
           opacity={1}
+          className='z-20'
         />
       </div>
     </div>

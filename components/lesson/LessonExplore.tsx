@@ -20,7 +20,7 @@ export function LessonExplore() {
   ];
 
   return (
-    <div className="w-full mb-8 max-w-5xl mx-auto px-4 md:px-8 mt-10">
+    <div className="w-full mb-8 max-w-5xl mt-10">
       <h1 className='text-2xl md:text-3xl font-semibold mb-6 text-left'>
         Explore:
       </h1>

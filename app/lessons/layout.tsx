@@ -111,13 +111,15 @@ export default function LessonsLayout({
   return (
     <>
       <StaggeredMenu />
-      <div className="flex h-screen w-full bg-primary">
+      <div className="flex h-screen w-full bg-primary overflow-hidden">
         <Sidebar>
           <SidebarBody>
             <SidebarContent recentLessons={recentLessons} />
           </SidebarBody>
         </Sidebar>
-        {children}
+        <div className="flex-1 overflow-auto">
+          {children}
+        </div>
       </div>
     </>
   );
