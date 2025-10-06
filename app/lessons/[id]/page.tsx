@@ -69,28 +69,12 @@ const topicData: Record<string, { title: string; cards: Array<{ title: string; s
         outline: 'Discover the building blocks of life and cellular processes',
         status: 'generated',
         created_at: '2024-01-11T10:00:00Z'
-      },
-      {
-        title: 'Earth Science',
-        src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/800px-The_Earth_seen_from_Apollo_17.jpg',
-        lessonId: 'd79394ae-d732-4d1e-b165-3ac4c75036b1',
-        outline: 'Study our planet\'s geology, atmosphere, and climate',
-        status: 'generated',
-        created_at: '2024-01-10T10:00:00Z'
       }
     ]
   },
   'physics': {
     title: 'Physics',
     cards: [
-      {
-        title: 'Quantum Mechanics',
-        src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Hydrogen_Density_Plots.png/800px-Hydrogen_Density_Plots.png',
-        lessonId: 'c6c01f47-4688-44b0-b8b0-00421baea11a',
-        outline: 'Dive into the quantum world of particles and waves',
-        status: 'generated',
-        created_at: '2024-01-09T10:00:00Z'
-      },
       {
         title: 'Classical Mechanics',
         src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Newtons_laws_in_latin.jpg/800px-Newtons_laws_in_latin.jpg',
@@ -414,7 +398,7 @@ export default function LessonViewPage() {
                     <div className="overflow-hidden mt-6 mb-12">
                       <iframe
                         srcDoc={getIframeContent()}
-                        className="w-full h-[100vh] mb-12 bg-transparent"
+                        className="w-full h-[80vh] mb-12 bg-transparent"
                         title="Lesson Content"
                         sandbox="allow-scripts"
                       />
