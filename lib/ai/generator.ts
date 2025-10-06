@@ -22,7 +22,7 @@ export async function generateLesson(outline: string, modelType: 'smart' | 'fast
   let generation: any = null;
 
   try {
-    const modelName = modelType === 'smart' ? 'gemini-2.5-flash' : 'gemini-1.5-flash';
+    const modelName = modelType === 'smart' ? 'gemini-2.5-flash' : 'gemini-2.0-flash';
     const userPrompt = createUserPrompt(outline);
 
     generation = trace?.generation({
