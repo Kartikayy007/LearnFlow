@@ -75,6 +75,20 @@ export async function getAllLessons() {
   return data as Lesson[];
 }
 
+export async function deleteLesson(id: string) {
+  const { error } = await supabase
+    .from('lessons')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting lesson:', error);
+    throw error;
+  }
+
+  return { success: true };
+}
+
 function extractTitle(outline: string): string {
   const title = outline
     .split(/[.\n]/)[0]

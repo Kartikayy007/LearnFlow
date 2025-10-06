@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Loader } from '../ui/shadcn-io/ai/loader';
 
 interface Lesson {
   id: string;
@@ -35,6 +36,23 @@ export function YourLessons() {
     }
   };
 
+  const handleDelete = async (e: React.MouseEvent, lessonId: string) => {
+    e.stopPropagation();
+    if (!confirm('Are you sure you want to delete this lesson?')) return;
+
+    try {
+      const response = await fetch(`/api/lessons/${lessonId}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Failed to delete lesson');
+
+      setLessons(lessons.filter(lesson => lesson.id !== lessonId));
+    } catch (err) {
+      setError('Failed to delete lesson');
+      console.error(err);
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'generated':
@@ -61,8 +79,10 @@ export function YourLessons() {
     return (
       <div className="w-full max-w-5xl mx-auto px-4 sm:px-8 lg:px-0">
         <h1 className='text-3xl font-bold text-foreground mb-6 text-left'>
-          Your Lessons
+          Your Lessons 
+          
         </h1>
+        <Loader size={20} />
         <div className="text-muted-foreground">Loading lessons...</div>
       </div>
     );
@@ -93,7 +113,7 @@ export function YourLessons() {
   }
 
   return (
-    <div className="w-full mb-32 max-w-5xl mx-auto cursor-pointer px-4 sm:px-8 lg:px-0">
+    <div id="your-lessons" className="w-full mb-32 max-w-5xl mx-auto px-4 sm:px-8 lg:px-0">
       <h1 className='text-3xl font-bold text-foreground mb-6 text-left relative inline-block'>
         <span className="relative">
           Your Lessons
@@ -104,10 +124,11 @@ export function YourLessons() {
           <div
             key={lesson.id}
             onClick={() => router.push(`/lessons/${lesson.id}`)}
-            className="bg-card border border-border rounded-lg p-6 hover:border-primary transition-colors cursor-pointer"
+            className="bg-card border border-border rounded-lg p-6 hover:border-primary transition-colors cursor-pointer relative group"
           >
+            
             <div className="flex items-start justify-between mb-3">
-              <h3 className="text-lg font-semibold text-foreground line-clamp-2">
+              <h3 className="text-lg font-semibold text-foreground line-clamp-2 pr-8">
                 {lesson.title}
               </h3>
               <span className={`text-xs px-2 py-1 rounded-full border ${getStatusColor(lesson.status)}`}>
@@ -120,7 +141,20 @@ export function YourLessons() {
             <div className="text-xs text-muted-foreground">
               {formatDate(lesson.created_at)}
             </div>
+
+            <button
+              onClick={(e) => handleDelete(e, lesson.id)}
+              className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-red-500/20 rounded-md"
+              aria-label="Delete lesson"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </button>
+            
           </div>
+
+          
         ))}
       </div>
     </div>

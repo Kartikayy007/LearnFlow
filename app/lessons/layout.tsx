@@ -11,21 +11,14 @@ import {
   IconHome,
   IconList,
   IconBrandGithub,
+  IconBook,
 } from '@tabler/icons-react';
 import { StaggeredMenu } from '@/components/staggered-menu';
 import { useRouter } from 'next/navigation';
 
 const links = [
-  {
-    label: 'Home',
-    href: '/',
-    icon: <IconHome className="h-5 w-5" />,
-  },
-  {
-    label: 'All Lessons',
-    href: '/test',
-    icon: <IconList className="h-5 w-5" />,
-  },
+  { label: 'Home', href: '/', icon: <IconHome className="h-5 w-5" /> },
+  { label: 'Your Lessons', href: '/#your-lessons', icon: <IconBook className="h-5 w-5" /> }
 ];
 
 interface Lesson {
@@ -63,7 +56,7 @@ function SidebarContent({ recentLessons }: { recentLessons: Lesson[] }) {
         <>
           <div className="border-t border-border my-4"></div>
           <div className="flex flex-col gap-2">
-            {open && <p className="text-xs text-muted-foreground px-2 mb-2">Recent Lessons</p>}
+            {open && <p className="text-xl text-foreground px-2 mb-2">Recent Lessons</p>}
             {recentLessons.map((lesson) => (
               <div
                 key={lesson.id}

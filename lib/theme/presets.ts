@@ -17,7 +17,6 @@ export const colorPresets: ColorPreset[] = [
   { name: 'Golden Hour', colors: { primary: '#ffbe14', primaryForeground: '#000000', secondary: '#8a4515', secondaryForeground: '#f4f4dd', background: '#111111', foreground: '#ffbe14', border: '#8a4515' } },
   { name: 'Deep Ocean', colors: { primary: '#155dfc', primaryForeground: '#ffffff', secondary: '#27272a', secondaryForeground: '#fafafa', background: '#0a0a0a', foreground: '#ffffff', border: '#27272a' } },
   { name: 'Violet Dream', colors: { primary: '#8b5cf6', primaryForeground: '#ffffff', secondary: '#1e1b4b', secondaryForeground: '#e0e7ff', background: '#0f0f0f', foreground: '#e0e7ff', border: '#1e1b4b' } },
-  { name: 'Sunset Beach', colors: { primary: '#fbe2a7', primaryForeground: '#12242e', secondary: '#e4a2b1', secondaryForeground: '#12242e', background: '#12242e', foreground: '#fbe2a7', border: '#4a4a4a' } },
   { name: 'Mint Fresh', colors: { primary: '#1DB954', primaryForeground: '#ffffff', secondary: '#191414', secondaryForeground: '#1DB954', background: '#121212', foreground: '#ffffff', border: '#282828' } },
   { name: 'Sky Blue', colors: { primary: '#4285F4', primaryForeground: '#ffffff', secondary: '#F4B400', secondaryForeground: '#000000', background: '#202124', foreground: '#e8eaed', border: '#3c4043' } },
   { name: 'Lavender Mist', colors: { primary: '#6366F1', primaryForeground: '#ffffff', secondary: '#312E81', secondaryForeground: '#E0E7FF', background: '#1e1b4b', foreground: '#e0e7ff', border: '#4c4b7d' } },

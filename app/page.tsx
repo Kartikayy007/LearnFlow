@@ -9,12 +9,12 @@ import { LessonExplore } from '@/components/lesson/LessonExplore';
 import { YourLessons } from '@/components/lesson/YourLessons';
 import { StaggeredMenu } from '@/components/staggered-menu';
 import { Sidebar, SidebarBody, SidebarLink, useSidebar } from '@/components/sidebar';
-import { IconHome, IconList } from '@tabler/icons-react';
+import { IconHome, IconList, IconBook } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
 const links = [
   { label: 'Home', href: '/', icon: <IconHome className="h-5 w-5" /> },
-  { label: 'All Lessons', href: '/test', icon: <IconList className="h-5 w-5" /> },
+  { label: 'Your Lessons', href: '/#your-lessons', icon: <IconBook className="h-5 w-5" /> }
 ];
 
 interface Lesson {
@@ -52,12 +52,12 @@ function SidebarContent({ recentLessons }: { recentLessons: Lesson[] }) {
         <>
           <div className="border-t border-border my-4"></div>
           <div className="flex flex-col gap-2">
-            {open && <p className="text-xs text-text px-2 mb-2">Recent Lessons</p>}
+            {open && <p className="text-xl text-foreground px-2 mb-2">Recent Lessons</p>}
             {recentLessons.map((lesson) => (
               <div
                 key={lesson.id}
                 onClick={() => router.push(`/lessons/${lesson.id}`)}
-                className="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-muted cursor-pointer transition-colors"
+                className="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-text cursor-pointer transition-colors"
               >
                 <div className={`w-2 h-2 rounded-full ${getStatusColor(lesson.status)}`}></div>
                 {open && (
@@ -158,7 +158,7 @@ export default function HomePage() {
             </SidebarBody>
           </Sidebar>
         </div>
-        <div className="flex-1 overflow-auto md:rounded-l-3xl bg-background border-l-[1px] border-l-border md:rounded-bl-3xl relative">
+        <div className="flex-1 overflow-auto md:rounded-lt-3xl bg-background border-l-[1px] border-l-border relative">
           <div className="absolute inset-0 overflow-hidden">
             <Aurora
               colorStops={colors}

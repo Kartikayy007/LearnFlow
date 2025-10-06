@@ -265,7 +265,7 @@ export default function LessonViewPage() {
 
     if (lessonId === 'computer-programming') {
       return (
-        <div style={{ width: '100%', height: '100%', position: 'relative', opacity: 0.3 }}>
+        <div style={{ width: '100%', height: '100%', position: 'relative', opacity: 0.1 }}>
           <FaultyTerminal
             scale={1.5}
             gridMul={[2, 1]}
@@ -411,10 +411,10 @@ export default function LessonViewPage() {
                   )}
 
                   {jsCode && (
-                    <div className="border-2 border-border rounded-lg overflow-hidden mt-6">
+                    <div className="overflow-hidden mt-6 mb-12">
                       <iframe
                         srcDoc={getIframeContent()}
-                        className="w-full h-[100vh] bg-transparent"
+                        className="w-full h-[100vh] mb-12 bg-transparent"
                         title="Lesson Content"
                         sandbox="allow-scripts"
                       />

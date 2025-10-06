@@ -88,9 +88,10 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-secondary dark:bg-primary w-[300px] shrink-0",
+          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-secondary dark:bg-primary shrink-0",
           className
         )}
+        initial={{ width: "60px" }}
         animate={{
           width: animate ? (open ? "300px" : "60px") : "300px",
         }}
@@ -119,7 +120,7 @@ export const MobileSidebar = ({
         {...props}
       >
         <IconMenu2
-          className="text-foreground cursor-pointer"
+          className="text-text cursor-pointer"
           onClick={() => setOpen(!open)}
         />
         <AnimatePresence>
@@ -138,7 +139,7 @@ export const MobileSidebar = ({
               )}
             >
               <div
-                className="absolute right-10 top-10 z-50 text-secondary-foreground dark:text-primary-foreground"
+                className="absolute right-10 top-10 z-50 text-text dark:text-text"
                 onClick={() => setOpen(!open)}
               >
                 <IconX />
@@ -161,9 +162,27 @@ export const SidebarLink = ({
   className?: string;
 }) => {
   const { open, animate } = useSidebar();
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (link.href.includes('#')) {
+      e.preventDefault();
+      const [path, hash] = link.href.split('#');
+
+      if (window.location.pathname === path || path === '/') {
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } else {
+        window.location.href = link.href;
+      }
+    }
+  };
+
   return (
     <a
       href={link.href}
+      onClick={handleClick}
       className={cn(
         "flex items-center justify-start gap-2  group/sidebar py-2",
         className
