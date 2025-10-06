@@ -99,8 +99,8 @@ LearnFlow leverages Google's Gemini AI to:
 ### Generated lessons
 ![alt text](<Screenshot 2025-10-06 at 9.41.42 PM.png>)
 
-### V
-
+### Video Demo
+<video controls src="Learn.mov" title="Title"></video>
 
 ### User Flow
 
