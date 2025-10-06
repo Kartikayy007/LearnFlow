@@ -59,7 +59,7 @@ export function YourLessons() {
 
   if (loading) {
     return (
-      <div className="w-full max-w-6xl mx-auto px-4 md:px-8">
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-8 lg:px-0">
         <h1 className='text-3xl font-bold text-foreground mb-6 text-left'>
           Your Lessons
         </h1>
@@ -70,7 +70,7 @@ export function YourLessons() {
 
   if (error) {
     return (
-      <div className="w-full max-w-6xl mx-auto px-4 md:px-8">
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-8 lg:px-0">
         <h1 className='text-3xl font-bold text-foreground mb-6 text-left'>
           Your Lessons
         </h1>
@@ -81,7 +81,7 @@ export function YourLessons() {
 
   if (lessons.length === 0) {
     return (
-      <div className="w-full max-w-6xl mx-auto px-4 md:px-8">
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-8 lg:px-0">
         <h1 className='text-3xl font-bold text-foreground mb-6 text-left'>
           Your Lessons
         </h1>
@@ -93,7 +93,7 @@ export function YourLessons() {
   }
 
   return (
-    <div className="w-full mb-32 max-w-5xl mx-auto cursor-pointer px-4 sm:px-8 lg:px-0 mt-32 md:-mt-32">
+    <div className="w-full mb-32 max-w-5xl mx-auto cursor-pointer px-4 sm:px-8 lg:px-0">
       <h1 className='text-3xl font-bold text-foreground mb-6 text-left relative inline-block'>
         <span className="relative">
           Your Lessons

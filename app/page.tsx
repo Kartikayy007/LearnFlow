@@ -159,7 +159,7 @@ export default function HomePage() {
           </Sidebar>
         </div>
         <div className="flex-1 overflow-auto md:rounded-l-3xl bg-background border-l-[1px] border-l-border md:rounded-bl-3xl relative">
-          <div className="h-full w-full overflow-hidden scrollbar-hide">
+          <div className="absolute inset-0 overflow-hidden">
             <Aurora
               colorStops={colors}
               blend={1.0}
@@ -168,12 +168,12 @@ export default function HomePage() {
             />
           </div>
 
-          <div className="absolute inset-0 flex flex-col items-center justify-center space-between p-4 md:p-10">
+          <div className="relative z-10 flex flex-col items-center justify-center space-between px-4 py-6 md:p-10 min-h-screen">
             <LessonHero />
             <LessonPrompt input={input} setInput={setInput} />
             <LessonExplore />
-          </div>
             <YourLessons />
+          </div>
         </div>
 
         <GradualBlur

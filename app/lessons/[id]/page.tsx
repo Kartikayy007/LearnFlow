@@ -396,7 +396,7 @@ export default function LessonViewPage() {
             <>
               <BlurText
                 text={lesson.title}
-                delay={70}
+                delay={100}
                 animateBy="words"
                 direction="bottom"
                 className="text-3xl md:text-5xl font-bold mb-2 text-foreground"

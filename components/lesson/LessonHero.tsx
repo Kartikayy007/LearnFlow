@@ -2,7 +2,7 @@ import RotatingText from '../RotatingText';
 
 export function LessonHero() {
   return (
-    <div className='mb-10 flex flex-col items-center mt-40 sm:mt-16 md:mt-0'>
+    <div className='mb-6 md:mb-10 flex flex-col items-center mt-8 sm:mt-12 md:mt-32'>
       <div className='flex items-center'>
         <h1 className='text-3xl sm:text-4xl md:text-5xl font-bold mr-2'>
           Learn

@@ -33,8 +33,7 @@ export const Card = React.memo(
         />
         <div
           className={cn(
-            "absolute inset-0 bg-background/50 flex items-end justify-start p-4 transition-opacity duration-300",
-            hovered === index ? "opacity-100" : "opacity-0"
+            "absolute inset-0 bg-background/50 flex items-end justify-start p-4 transition-opacity duration-300"
           )}
         >
           <ButtonCrossArrow text={card.title} />
